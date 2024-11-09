@@ -1,0 +1,39 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+
+  img {
+    width: 10rem;
+    margin: 0 auto;
+    height: auto;
+    margin-top: 12rem;
+  }
+  .container,
+  .content {
+    height: 0.1rem;
+    width: 10rem;
+    border-radius: 9999px;
+  }
+  .container {
+    margin-top: 1rem;
+    background-color: rgb(231, 231, 231);
+  }
+
+  .content {
+    width: 4rem;
+    background-color: var(--primary-color);
+    animation: slide 1s infinite alternate;
+  }
+
+  @keyframes slide {
+    0% {
+      transform: translateX(1rem);
+    }
+    100% {
+      transform: translateX(5rem);
+    }
+  }
+}

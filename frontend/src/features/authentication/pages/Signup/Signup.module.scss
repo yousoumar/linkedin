@@ -1,0 +1,26 @@
+.root {
+  .logo {
+    width: 7rem;
+  }
+
+  main {
+    padding: 0 4rem;
+  }
+
+  form {
+    margin-top: 1rem;
+  }
+
+  .disclaimer {
+    font-size: 0.7rem;
+  }
+
+  .register {
+    text-align: center;
+  }
+
+  .error {
+    color: red;
+    margin-bottom: 1rem;
+  }
+}

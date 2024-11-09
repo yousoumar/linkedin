@@ -1,0 +1,62 @@
+.root {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+  background-color: rgb(245, 245, 245);
+
+  .container {
+    max-width: 74rem;
+    width: 100%;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  header {
+    a {
+      display: block;
+      width: max-content;
+    }
+  }
+  .logo {
+    width: 7rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+
+  a {
+    color: var(--primary-color);
+    font-weight: bold;
+  }
+
+  footer {
+    font-size: 0.8rem;
+    background: white;
+
+    a {
+      color: rgba(0, 0, 0, 0.6);
+      font-weight: normal;
+    }
+    img {
+      width: 4rem;
+      height: auto;
+    }
+    ul {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+      padding: 0;
+    }
+
+    li {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+  }
+}
