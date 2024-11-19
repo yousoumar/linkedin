@@ -7,6 +7,9 @@ import com.linkedin.backend.features.authentication.repository.AuthenticationUse
 import com.linkedin.backend.features.authentication.utils.EmailService;
 import com.linkedin.backend.features.authentication.utils.Encoder;
 import com.linkedin.backend.features.authentication.utils.JsonWebToken;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -25,6 +28,9 @@ public class AuthenticationService {
     private final JsonWebToken jsonWebToken;
     private final EmailService emailService;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     public AuthenticationService(AuthenticationUserRepository authenticationUserRepository, Encoder encoder, JsonWebToken jsonWebToken, EmailService emailService) {
         this.authenticationUserRepository = authenticationUserRepository;
         this.encoder = encoder;
@@ -36,7 +42,7 @@ public class AuthenticationService {
         SecureRandom random = new SecureRandom();
         StringBuilder token = new StringBuilder(5);
         for (int i = 0; i < 5; i++) {
-            token.append(random.nextInt(10)); // Appending random digit from 0 to 9
+            token.append(random.nextInt(10));
         }
         return token.toString();
     }
@@ -101,7 +107,7 @@ public class AuthenticationService {
                         Only one step to take full advantage of LinkedIn.
                         
                         Enter this code to verify your email: %s. The code will expire in %s minutes.""",
-                emailVerificationToken, durationInMinutes); // Include the token in the message body
+                emailVerificationToken, durationInMinutes);
         try {
             emailService.sendEmail(registerRequestBody.getEmail(), subject, body);
         } catch (Exception e) {
@@ -115,7 +121,17 @@ public class AuthenticationService {
         return authenticationUserRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found."));
     }
 
-    // Password reset logic
+    @Transactional
+    public void deleteUser(Long userId) {
+        AuthenticationUser user = entityManager.find(AuthenticationUser.class, userId);
+        if (user != null) {
+            entityManager.createNativeQuery("DELETE FROM posts_likes WHERE user_id = :userId")
+                    .setParameter("userId", userId)
+                    .executeUpdate();
+            entityManager.remove(user);
+        }
+    }
+
     public void sendPasswordResetToken(String email) {
         Optional<AuthenticationUser> user = authenticationUserRepository.findByEmail(email);
         if (user.isPresent()) {
@@ -153,4 +169,17 @@ public class AuthenticationService {
             throw new IllegalArgumentException("Password reset token failed.");
         }
     }
+
+
+    public AuthenticationUser updateUserProfile(Long userId, String firstName, String lastName, String company, String position, String location) {
+        AuthenticationUser user = authenticationUserRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        if (firstName != null) user.setFirstName(firstName);
+        if (lastName != null) user.setLastName(lastName);
+        if (company != null) user.setCompany(company);
+        if (position != null) user.setPosition(position);
+        if (location != null) user.setLocation(location);
+        return authenticationUserRepository.save(user);
+    }
+
+
 }
