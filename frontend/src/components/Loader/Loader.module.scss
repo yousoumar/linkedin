@@ -11,15 +11,17 @@
     height: auto;
     margin-top: 12rem;
   }
+
   .container,
   .content {
     height: 0.1rem;
     width: 10rem;
     border-radius: 9999px;
   }
+
   .container {
     margin-top: 1rem;
-    background-color: rgb(231, 231, 231);
+    background-color: rgb(231 231 231);
   }
 
   .content {
@@ -32,6 +34,7 @@
     0% {
       transform: translateX(1rem);
     }
+
     100% {
       transform: translateX(5rem);
     }

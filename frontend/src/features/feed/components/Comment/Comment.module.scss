@@ -1,0 +1,98 @@
+.root {
+  display: grid;
+  font-size: 0.8rem;
+  gap: 0.3rem;
+  position: relative;
+
+  &:not(:last-child) {
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  button.author {
+    display: grid;
+    align-items: center;
+    grid-template-columns: 4rem 1fr;
+    gap: 1rem;
+    text-align: left;
+    margin-bottom: 0.5rem;
+
+    > div {
+      width: 100%;
+    }
+  }
+
+  button.action {
+    background-color: transparent;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    transition: 0.3s;
+
+    &:hover,
+    &.active {
+      background-color: #e0e0e0;
+    }
+
+    svg {
+      width: 0.8rem;
+      height: 0.8rem;
+    }
+  }
+
+  .actions {
+    position: absolute;
+    right: 0.5rem;
+    top: 1.7rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background-color: #e0e0e0;
+    border-radius: 0.3rem;
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    gap: 0.5rem;
+
+    button {
+      width: 100%;
+      text-align: left;
+    }
+
+    button:not(:last-child) {
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 0.3rem;
+    }
+  }
+
+  .name {
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .avatar {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .date {
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: normal;
+  }
+}

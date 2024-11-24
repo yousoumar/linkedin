@@ -12,12 +12,15 @@
 }
 
 html {
-  font-family: "Poppins", sans-serif;
+  font-family: Poppins, sans-serif;
+  background-color: #f4f2ee;
+  overflow-x: hidden;
 }
 
 img {
   max-width: 100%;
   display: block;
+  object-fit: cover;
 }
 
 button {
@@ -29,4 +32,8 @@ button {
 
 a {
   text-decoration: none;
+}
+
+ul {
+  list-style: none;
 }

@@ -2,7 +2,6 @@
   display: grid;
   grid-template-rows: auto 1fr auto;
   min-height: 100vh;
-  background-color: rgb(245, 245, 245);
 
   .container {
     max-width: 74rem;
@@ -11,12 +10,18 @@
     padding: 2rem;
   }
 
+  a {
+    color: var(--primary-color);
+    font-weight: bold;
+  }
+
   header {
     a {
       display: block;
       width: max-content;
     }
   }
+
   .logo {
     width: 7rem;
   }
@@ -27,23 +32,21 @@
     margin-bottom: 1rem;
   }
 
-  a {
-    color: var(--primary-color);
-    font-weight: bold;
-  }
-
   footer {
     font-size: 0.8rem;
     background: white;
+    border: 1px solid #e0e0e0;
 
     a {
-      color: rgba(0, 0, 0, 0.6);
+      color: rgb(0 0 0 / 60%);
       font-weight: normal;
     }
+
     img {
       width: 4rem;
       height: auto;
     }
+
     ul {
       display: flex;
       align-items: center;

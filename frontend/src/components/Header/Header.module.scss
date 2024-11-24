@@ -1,0 +1,109 @@
+.root {
+  border: 1px solid #e0e0e0;
+  background-color: white;
+  color: rgb(0 0 0 / 60%);
+  font-size: 0.9rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  .container {
+    max-width: 74rem;
+    padding-inline: 1rem;
+    margin: 0 auto;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    position: relative;
+    gap: 2rem;
+  }
+
+  .logo {
+    width: 3rem;
+    height: 3rem;
+    fill: var(--primary-color);
+  }
+
+  .left {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+  }
+
+  .right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  ul {
+    position: absolute;
+    top: 5rem;
+    right: 1rem;
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 0.3rem;
+    padding: 1rem;
+    width: min(18rem, 100%);
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  a {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    &:hover {
+      color: black;
+    }
+  }
+
+  .active {
+    color: var(--primary-color);
+  }
+
+  svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .toggle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media screen and (width >= 1080px) {
+  .left {
+    grid-template-columns: auto 0.7fr 0.3fr;
+  }
+
+  .right {
+    gap: 2rem;
+
+    ul a {
+      flex-direction: column;
+      gap: 0;
+    }
+
+    ul {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: auto;
+      gap: 2rem;
+      background-color: transparent;
+      border: none;
+      top: 0;
+      right: 0;
+      padding: 0;
+    }
+
+    .toggle {
+      display: none;
+    }
+  }
+}

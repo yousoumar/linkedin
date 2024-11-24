@@ -1,17 +1,19 @@
+import { Button } from "../../../../components/Button/Button";
+import { Input } from "../../../../components/Input/Input";
+import { usePageTitle } from "../../../../hooks/usePageTitle";
 import { Box } from "../../components/Box/Box";
-import { Button } from "../../components/Button/Button";
-import { Input } from "../../components/Input/Input";
-import { Layout } from "../../components/Layout/Layout";
 import classes from "./VerifyEmail.module.scss";
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuthentication } from "../../contexts/AuthenticationContextProvider";
 
 export function VerifyEmail() {
   const [errorMessage, setErrorMessage] = useState("");
+  const { user, setUser } = useAuthentication();
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
+  usePageTitle("Verify Email");
   const navigate = useNavigate();
 
   const validateEmail = async (code: string) => {
@@ -30,6 +32,7 @@ export function VerifyEmail() {
       );
       if (response.ok) {
         setErrorMessage("");
+        setUser({ ...user!, emailVerified: true });
         navigate("/");
       }
       const { message } = await response.json();
@@ -69,7 +72,7 @@ export function VerifyEmail() {
   };
 
   return (
-    <Layout className={classes.root}>
+    <div className={classes.root}>
       <Box>
         <h1>Verify your Email</h1>
 
@@ -101,6 +104,6 @@ export function VerifyEmail() {
           </Button>
         </form>
       </Box>
-    </Layout>
+    </div>
   );
 }

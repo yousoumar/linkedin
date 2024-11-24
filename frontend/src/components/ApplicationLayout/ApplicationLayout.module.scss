@@ -1,0 +1,13 @@
+.root {
+  min-height: 100vh;
+  display: grid;
+  gap: 1rem;
+  grid-template-rows: auto 1fr;
+
+  .container {
+    max-width: 74rem;
+    width: 100%;
+    margin: 0 auto;
+    padding: 1rem;
+  }
+}
