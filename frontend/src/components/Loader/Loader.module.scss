@@ -21,7 +21,7 @@
 
   .container {
     margin-top: 1rem;
-    background-color: rgb(231 231 231);
+    background-color: rgb(255 255 255);
   }
 
   .content {
@@ -32,11 +32,11 @@
 
   @keyframes slide {
     0% {
-      transform: translateX(1rem);
+      transform: translateX(0);
     }
 
     100% {
-      transform: translateX(5rem);
+      transform: translateX(6rem);
     }
   }
 }

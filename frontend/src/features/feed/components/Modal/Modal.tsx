@@ -38,13 +38,14 @@ export function Madal({
             const picture = e.currentTarget.picture.value;
 
             if (!content) {
-              setError("");
+              setError("Content is required");
               setIsLoading(false);
               return;
             }
 
             try {
               await onSubmit(content, picture);
+              setShowModal(false);
             } catch (error) {
               if (error instanceof Error) {
                 setError(error.message);
@@ -53,7 +54,6 @@ export function Madal({
               }
             } finally {
               setIsLoading(false);
-              setShowModal(false);
             }
           }}
         >
@@ -67,6 +67,8 @@ export function Madal({
             />
             <Input
               defaultValue={picture}
+              onFocus={() => setError("")}
+              onChange={() => setError("")}
               placeholder="Image URL (optional)"
               name="picture"
               style={{

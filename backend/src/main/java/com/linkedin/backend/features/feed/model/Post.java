@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.linkedin.backend.features.authentication.model.AuthenticationUser;
@@ -33,6 +34,7 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "author_id", nullable = false)
     private AuthenticationUser author;
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "posts_likes",
@@ -40,6 +42,7 @@ public class Post {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private Set<AuthenticationUser> likes;
+    @JsonIgnore
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
     @CreationTimestamp

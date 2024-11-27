@@ -1,5 +1,6 @@
 package com.linkedin.backend.features.authentication.controller;
 
+import com.linkedin.backend.dto.Response;
 import com.linkedin.backend.features.authentication.dto.AuthenticationRequestBody;
 import com.linkedin.backend.features.authentication.dto.AuthenticationResponseBody;
 import com.linkedin.backend.features.authentication.model.AuthenticationUser;
@@ -29,9 +30,9 @@ public class AuthenticationController {
     }
 
     @DeleteMapping("/delete")
-    public String deleteUser(@RequestAttribute("authenticatedUser") AuthenticationUser user) {
+    public Response deleteUser(@RequestAttribute("authenticatedUser") AuthenticationUser user) {
         authenticationUserService.deleteUser(user.getId());
-        return "User deleted successfully.";
+        return new Response("User deleted successfully.");
     }
 
     @GetMapping("/user")
@@ -40,27 +41,27 @@ public class AuthenticationController {
     }
 
     @PutMapping("/validate-email-verification-token")
-    public String verifyEmail(@RequestParam String token, @RequestAttribute("authenticatedUser") AuthenticationUser user) {
+    public Response verifyEmail(@RequestParam String token, @RequestAttribute("authenticatedUser") AuthenticationUser user) {
         authenticationUserService.validateEmailVerificationToken(token, user.getEmail());
-        return "Email verified successfully.";
+        return new Response("Email verified successfully.");
     }
 
     @GetMapping("/send-email-verification-token")
-    public String sendEmailVerificationToken(@RequestAttribute("authenticatedUser") AuthenticationUser user) {
+    public Response sendEmailVerificationToken(@RequestAttribute("authenticatedUser") AuthenticationUser user) {
         authenticationUserService.sendEmailVerificationToken(user.getEmail());
-        return "Email verification token sent successfully.";
+        return new Response("Email verification token sent successfully.");
     }
 
     @PutMapping("/send-password-reset-token")
-    public String sendPasswordResetToken(@RequestParam String email) {
+    public Response sendPasswordResetToken(@RequestParam String email) {
         authenticationUserService.sendPasswordResetToken(email);
-        return "Password reset token sent successfully.";
+        return new Response("Password reset token sent successfully.");
     }
 
     @PutMapping("/reset-password")
-    public String resetPassword(@RequestParam String newPassword, @RequestParam String token, @RequestParam String email) {
+    public Response resetPassword(@RequestParam String newPassword, @RequestParam String token, @RequestParam String email) {
         authenticationUserService.resetPassword(email, newPassword, token);
-        return "Password reset successfully.";
+        return new Response("Password reset successfully.");
     }
 
     @PutMapping("/profile/{id}")

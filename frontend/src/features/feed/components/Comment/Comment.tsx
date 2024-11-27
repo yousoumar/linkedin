@@ -5,7 +5,8 @@ import {
   useAuthentication,
   User,
 } from "../../../authentication/contexts/AuthenticationContextProvider";
-import { timeAgo } from "../../utils/date";
+
+import { TimeAgo } from "../TimeAgo/TimeAgo";
 import classes from "./Comment.module.scss";
 
 export interface Comment {
@@ -51,10 +52,7 @@ export function Comment({ comment, deleteComment, editComment }: CommentProps) {
                 <div className={classes.title}>
                   {comment.author.position + " at " + comment.author.company}
                 </div>
-                <div className={classes.date}>
-                  {timeAgo(new Date(comment.updatedDate || comment.creationDate))}
-                  {comment.updatedDate ? " . Edited " : ""}
-                </div>
+                <TimeAgo date={comment.creationDate} edited={!comment.updatedDate} />
               </div>
             </button>
             {comment.author.id == user?.id && (

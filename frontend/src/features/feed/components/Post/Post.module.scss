@@ -30,11 +30,6 @@
     align-items: center;
   }
 
-  .date {
-    color: #666;
-    font-size: 0.8rem;
-  }
-
   .actions {
     display: flex;
     gap: 1rem;
@@ -55,6 +50,10 @@
 
       &.active {
         color: var(--primary-color);
+      }
+
+      &[disabled] {
+        cursor: wait;
       }
     }
   }

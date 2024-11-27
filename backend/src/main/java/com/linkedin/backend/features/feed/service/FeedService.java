@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class FeedService {
@@ -106,4 +107,13 @@ public class FeedService {
     }
 
 
+    public List<Comment> getPostComments(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("Post not found"));
+        return post.getComments();
+    }
+
+    public Set<AuthenticationUser> getPostLikes(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("Post not found"));
+        return post.getLikes();
+    }
 }
