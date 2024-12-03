@@ -41,7 +41,6 @@ export function Post({ post, setPosts }: PostProps) {
 
   useEffect(() => {
     webSocketClient?.subscribe(`/topic/likes/${post.id}`, (message) => {
-      console.log("Like update:", JSON.parse(message.body));
       setLikes(JSON.parse(message.body));
     });
   }, [post.id, webSocketClient]);
@@ -80,9 +79,7 @@ export function Post({ post, setPosts }: PostProps) {
     await request<Post>({
       endpoint: `/api/v1/feed/posts/${post.id}/like`,
       method: "PUT",
-      onSuccess: (post) => {
-        console.log("Post liked:", post);
-      },
+      onSuccess: () => {},
       onFailure: (error) => {
         console.error(error);
         setPostLiked((prev) => !prev);
