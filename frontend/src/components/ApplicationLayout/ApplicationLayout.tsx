@@ -1,10 +1,10 @@
 import { Outlet } from "react-router-dom";
-import Ws from "../../features/ws/context/Ws";
+import { WebSocketContextProvider } from "../../features/ws/context/Ws";
 import { Header } from "../Header/Header";
 import classes from "./ApplicationLayout.module.scss";
 export function ApplicationLayout() {
   return (
-    <Ws>
+    <WebSocketContextProvider>
       <div className={classes.root}>
         <Header />
 
@@ -12,6 +12,6 @@ export function ApplicationLayout() {
           <Outlet />
         </main>
       </div>
-    </Ws>
+    </WebSocketContextProvider>
   );
 }

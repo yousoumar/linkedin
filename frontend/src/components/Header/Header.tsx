@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useAuthentication } from "../../features/authentication/contexts/AuthenticationContextProvider";
+import { Post } from "../../features/feed/components/Post/Post";
+import { useWebSocket } from "../../features/ws/context/Ws";
 import { Input } from "../Input/Input";
 import classes from "./Header.module.scss";
 import { Profile } from "./components/Profile/Profile";
 export function Header() {
   const { user } = useAuthentication();
+  const [likes, setLikes] = useState<Post[]>([]);
+  const webSocketClient = useWebSocket();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showNavigationMenu, setShowNavigationMenu] = useState(
     window.innerWidth > 1080 ? true : false
@@ -19,6 +23,11 @@ export function Header() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  useEffect(() => {
+    webSocketClient?.subscribe(`/topic/user/${user?.id}/likes`, (message) => {
+      setLikes((prev) => [...prev, JSON.parse(message.body)]);
+    });
+  }, [user?.id, webSocketClient]);
   return (
     <header className={classes.root}>
       <div className={classes.container}>
@@ -147,6 +156,9 @@ export function Header() {
                   >
                     <path d="M22 19h-8.28a2 2 0 11-3.44 0H2v-1a4.52 4.52 0 011.17-2.83l1-1.17h15.7l1 1.17A4.42 4.42 0 0122 18zM18.21 7.44A6.27 6.27 0 0012 2a6.27 6.27 0 00-6.21 5.44L5 13h14z"></path>
                   </svg>
+                  {likes.length > 0 ? (
+                    <span className={classes.notification}>{likes.length}</span>
+                  ) : null}
                   <span>Notications</span>
                 </NavLink>
               </li>

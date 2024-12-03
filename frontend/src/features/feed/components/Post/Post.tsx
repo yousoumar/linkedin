@@ -6,6 +6,7 @@ import {
   useAuthentication,
   User,
 } from "../../../authentication/contexts/AuthenticationContextProvider";
+import { useWebSocket } from "../../../ws/context/Ws";
 import { Comment } from "../Comment/Comment";
 import { Madal } from "../Modal/Modal";
 import { TimeAgo } from "../TimeAgo/TimeAgo";
@@ -34,8 +35,16 @@ export function Post({ post, setPosts }: PostProps) {
   const { user } = useAuthentication();
   const [showMenu, setShowMenu] = useState(false);
   const [editing, setEditing] = useState(false);
+  const webSocketClient = useWebSocket();
 
   const [postLiked, setPostLiked] = useState<boolean | undefined>(undefined);
+
+  useEffect(() => {
+    webSocketClient?.subscribe(`/topic/likes/${post.id}`, (message) => {
+      console.log("Like update:", JSON.parse(message.body));
+      setLikes(JSON.parse(message.body));
+    });
+  }, [post.id, webSocketClient]);
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -71,10 +80,8 @@ export function Post({ post, setPosts }: PostProps) {
     await request<Post>({
       endpoint: `/api/v1/feed/posts/${post.id}/like`,
       method: "PUT",
-      onSuccess: () => {
-        setLikes((prev) =>
-          postLiked ? prev.filter((like) => like.id !== user?.id) : [user!, ...prev]
-        );
+      onSuccess: (post) => {
+        console.log("Post liked:", post);
       },
       onFailure: (error) => {
         console.error(error);

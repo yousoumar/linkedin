@@ -7,6 +7,7 @@ import com.linkedin.backend.features.feed.model.Comment;
 import com.linkedin.backend.features.feed.model.Post;
 import com.linkedin.backend.features.feed.repository.CommentRepository;
 import com.linkedin.backend.features.feed.repository.PostRepository;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -18,11 +19,12 @@ public class FeedService {
     private final PostRepository postRepository;
     private final AuthenticationUserRepository userRepository;
     private final CommentRepository commentRepository;
-
-    public FeedService(PostRepository postRepository, AuthenticationUserRepository userRepository, CommentRepository commentRepository) {
+    private final SimpMessagingTemplate messagingTemplate;
+    public FeedService(PostRepository postRepository, AuthenticationUserRepository userRepository, CommentRepository commentRepository, SimpMessagingTemplate messagingTemplate) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
+        this.messagingTemplate = messagingTemplate;
     }
 
     public Post createPost(PostDto postDto, Long authorId) {
@@ -65,7 +67,11 @@ public class FeedService {
         } else {
             post.getLikes().add(user);
         }
-        return postRepository.save(post);
+        Post savedPost = postRepository.save(post);
+        messagingTemplate.convertAndSend("/topic/likes/" + postId, savedPost.getLikes());
+        messagingTemplate.convertAndSend("/topic/user/" + post.getAuthor().getId() + "/likes", savedPost);
+
+        return savedPost;
     }
 
     public Comment addComment(Long postId, Long userId, String content) {
