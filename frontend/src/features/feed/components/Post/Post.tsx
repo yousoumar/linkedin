@@ -41,9 +41,11 @@ export function Post({ post, setPosts }: PostProps) {
 
   useEffect(() => {
     webSocketClient?.subscribe(`/topic/likes/${post.id}`, (message) => {
-      setLikes(JSON.parse(message.body));
+      const likes = JSON.parse(message.body);
+      setLikes(likes);
+      setPostLiked(likes.some((like: User) => like.id === user?.id));
     });
-  }, [post.id, webSocketClient]);
+  }, [post.id, user?.id, webSocketClient]);
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -75,15 +77,11 @@ export function Post({ post, setPosts }: PostProps) {
   }, [post.id, user?.id]);
 
   const like = async () => {
-    setPostLiked((prev) => !prev);
     await request<Post>({
       endpoint: `/api/v1/feed/posts/${post.id}/like`,
       method: "PUT",
       onSuccess: () => {},
-      onFailure: (error) => {
-        console.error(error);
-        setPostLiked((prev) => !prev);
-      },
+      onFailure: (error) => console.log(error),
     });
   };
 

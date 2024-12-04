@@ -9,7 +9,7 @@ export const WebSocketContextProvider = ({ children }: { children: ReactNode }) 
   const [stompClient, setStompClient] = useState<CompatClient | null>(null);
 
   useEffect(() => {
-    const client = Stomp.client("ws://localhost:8080/ws");
+    const client = Stomp.client(`ws://localhost:8080/ws?token=${localStorage.getItem("token")}`);
 
     client.connect(
       {},
