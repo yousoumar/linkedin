@@ -10,10 +10,10 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
 import java.util.Map;
 
 @Component
-public class AuthHandshakeInterceptor implements HandshakeInterceptor {
+public class AuthenticationInterceptor implements HandshakeInterceptor {
     private final JsonWebToken jsonWebToken;
 
-    public AuthHandshakeInterceptor(JsonWebToken jsonWebToken) {
+    public AuthenticationInterceptor(JsonWebToken jsonWebToken) {
         this.jsonWebToken = jsonWebToken;
     }
 
