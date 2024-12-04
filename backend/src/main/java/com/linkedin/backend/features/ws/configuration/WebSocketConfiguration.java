@@ -1,7 +1,7 @@
-package com.linkedin.backend.features.messaging.configuration;
+package com.linkedin.backend.features.ws.configuration;
 
 
-import com.linkedin.backend.features.messaging.interceptor.AuthenticationInterceptor;
+import com.linkedin.backend.features.ws.interceptor.AuthenticationInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;

@@ -1,4 +1,4 @@
-package com.linkedin.backend.features.messaging.interceptor;
+package com.linkedin.backend.features.ws.interceptor;
 
 import com.linkedin.backend.features.authentication.utils.JsonWebToken;
 import org.springframework.http.server.ServerHttpRequest;
