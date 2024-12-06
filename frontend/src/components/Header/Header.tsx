@@ -23,7 +23,7 @@ export function Header() {
 
   useEffect(() => {
     webSocketClient?.subscribe(`/topic/users/${user?.id}/notifications`, (message) => {
-      console.log("New notification:", message.body);
+      console.log("New notification:", JSON.parse(message.body));
     });
   }, [user?.id, webSocketClient]);
   return (

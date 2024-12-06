@@ -4,12 +4,10 @@ import com.linkedin.backend.features.authentication.model.AuthenticationUser;
 import com.linkedin.backend.features.authentication.repository.AuthenticationUserRepository;
 import com.linkedin.backend.features.feed.dto.PostDto;
 import com.linkedin.backend.features.feed.model.Comment;
-import com.linkedin.backend.features.feed.model.Notification;
 import com.linkedin.backend.features.feed.model.Post;
 import com.linkedin.backend.features.feed.repository.CommentRepository;
-import com.linkedin.backend.features.feed.repository.NotificationRepository;
 import com.linkedin.backend.features.feed.repository.PostRepository;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import com.linkedin.backend.features.notifications.service.NotificationService;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -21,16 +19,13 @@ public class FeedService {
     private final PostRepository postRepository;
     private final AuthenticationUserRepository userRepository;
     private final CommentRepository commentRepository;
-    private final NotificationRepository notificationRepository;
-    private final SimpMessagingTemplate messagingTemplate;
+    private final NotificationService notificationService;
 
-
-    public FeedService(PostRepository postRepository, AuthenticationUserRepository userRepository, CommentRepository commentRepository, NotificationRepository notificationRepository, SimpMessagingTemplate messagingTemplate) {
+    public FeedService(PostRepository postRepository, AuthenticationUserRepository userRepository, CommentRepository commentRepository, NotificationService notificationService) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
-        this.notificationRepository = notificationRepository;
-        this.messagingTemplate = messagingTemplate;
+        this.notificationService = notificationService;
     }
 
     public Post createPost(PostDto postDto, Long authorId) {
@@ -72,11 +67,11 @@ public class FeedService {
             post.getLikes().remove(user);
         } else {
             post.getLikes().add(user);
-            sendNotificationToAuthor(post.getAuthor().getId(), user.getFirstName() + " " + user.getLastName() + " liked your post");
+            notificationService.sendLikeNotification(user, post.getAuthor());
         }
         Post savedPost = postRepository.save(post);
-        messagingTemplate.convertAndSend("/topic/likes/" + postId, savedPost.getLikes());
-        
+        notificationService.sendLikeToPost(postId, savedPost.getLikes());
+
         return savedPost;
     }
 
@@ -127,17 +122,5 @@ public class FeedService {
     public Set<AuthenticationUser> getPostLikes(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("Post not found"));
         return post.getLikes();
-    }
-
-    private void sendNotificationToAuthor(Long authorId, String message) {
-
-        AuthenticationUser author = userRepository.findById(authorId).orElseThrow();
-        Notification notification = new Notification();
-        notification.setRecipient(author);
-        notification.setMessage(message);
-        notification.setRead(false);
-        notificationRepository.save(notification);
-
-        messagingTemplate.convertAndSend("/topic/users/" + authorId + "/notifications", message);
     }
 }
