@@ -11,7 +11,7 @@ import { Signup } from "./features/authentication/pages/Signup/Signup";
 import { VerifyEmail } from "./features/authentication/pages/VerifyEmail/VerifyEmail.tsx";
 import { Feed } from "./features/feed/pages/Feed/Feed.tsx";
 import { Notifications } from "./features/feed/pages/Notifications/Notifications.tsx";
-import { Post } from "./features/feed/pages/Post/Post.tsx";
+import { PostPage } from "./features/feed/pages/Post/Post.tsx";
 import "./index.scss";
 
 const router = createBrowserRouter([
@@ -28,7 +28,7 @@ const router = createBrowserRouter([
           },
           {
             path: "posts/:id",
-            element: <Post />,
+            element: <PostPage />,
           },
           {
             path: "network",

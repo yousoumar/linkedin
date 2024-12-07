@@ -23,7 +23,7 @@ export interface Post {
 
 interface PostProps {
   post: Post;
-  setPosts: Dispatch<SetStateAction<Post[]>>;
+  setPosts?: Dispatch<SetStateAction<Post[]>>;
 }
 
 export function Post({ post, setPosts }: PostProps) {
