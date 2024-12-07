@@ -2,6 +2,9 @@ package com.linkedin.backend.features.notifications.model;
 
 import com.linkedin.backend.features.authentication.model.AuthenticationUser;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 
 @Entity
@@ -15,12 +18,17 @@ public class Notification {
     private AuthenticationUser actor;
     private boolean isRead;
     private NotificationType type;
+    private Long resourceId;
 
-    public Notification(AuthenticationUser actor, AuthenticationUser recipient, NotificationType type) {
+    @CreationTimestamp
+    private LocalDateTime creationDate;
+
+    public Notification(AuthenticationUser actor, AuthenticationUser recipient, NotificationType type, Long resourceId) {
         this.actor = actor;
         this.recipient = recipient;
         this.type = type;
         this.isRead = false;
+        this.resourceId = resourceId;
     }
 
     public Notification() {
@@ -65,5 +73,21 @@ public class Notification {
 
     public void setType(NotificationType type) {
         this.type = type;
+    }
+
+    public Long getResourceId() {
+        return resourceId;
+    }
+
+    public void setResourceId(Long resourceId) {
+        this.resourceId = resourceId;
+    }
+
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
     }
 }

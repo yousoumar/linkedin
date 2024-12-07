@@ -1,6 +1,9 @@
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { request } from "../../../../utils/api";
 import { User } from "../../../authentication/contexts/AuthenticationContextProvider";
+import { LeftSidebar } from "../../components/LeftSidebar/LeftSidebar";
+import { RightSidebar } from "../../components/RightSidebar/RightSidebar";
 import classes from "./Notifications.module.scss";
 
 export enum NotificationType {
@@ -11,8 +14,9 @@ export interface Notification {
   id: number;
   recipient: User;
   actor: User;
-  isRead: boolean;
+  read: boolean;
   type: NotificationType;
+  resourceId: number;
 }
 
 export function Notifications() {
@@ -29,24 +33,68 @@ export function Notifications() {
 
     fetchNotifications();
   }, []);
+
   return (
     <div className={classes.root}>
-      {notifications.map((notification) => (
-        <Notification key={notification.id} notification={notification} />
-      ))}
-      {notifications.length === 0 && <p>No notifications</p>}
+      <div className={classes.left}>
+        <LeftSidebar />
+      </div>
+      <div className={classes.center}>
+        {notifications.map((notification) => (
+          <Notification
+            key={notification.id}
+            notification={notification}
+            setNotifications={setNotifications}
+          />
+        ))}
+        {notifications.length === 0 && <p>No notifications</p>}
+      </div>
+      <div className={classes.right}>
+        <RightSidebar />
+      </div>
     </div>
   );
 }
 
-function Notification({ notification }: { notification: Notification }) {
+function Notification({
+  notification,
+  setNotifications,
+}: {
+  notification: Notification;
+
+  setNotifications: Dispatch<SetStateAction<Notification[]>>;
+}) {
+  const navigate = useNavigate();
+  function markNotificationAsRead(notificationId: number) {
+    request({
+      endpoint: `/api/v1/notifications/${notificationId}`,
+      method: "PUT",
+      onSuccess: () => {
+        setNotifications((prev) =>
+          prev.map((notification) =>
+            notification.id === notificationId ? { ...notification, isRead: true } : notification
+          )
+        );
+      },
+      onFailure: (error) => console.log(error),
+    });
+  }
   return (
-    <div className={classes.notification}>
+    <button
+      onClick={() => {
+        markNotificationAsRead(notification.id);
+        navigate(`/posts/${notification.resourceId}`);
+      }}
+      className={
+        notification.read ? classes.notification : `${classes.notification} ${classes.unread}`
+      }
+    >
       <img src={notification.actor.profilePicture} alt="" className={classes.avatar} />
+
       <p>
         <strong>{notification.actor.firstName + " " + notification.actor.lastName}</strong>{" "}
         {notification.type === NotificationType.LIKE ? "liked" : "commented on"} your post.
       </p>
-    </div>
+    </button>
   );
 }

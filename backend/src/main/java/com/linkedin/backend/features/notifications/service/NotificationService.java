@@ -22,7 +22,7 @@ public class NotificationService {
     }
 
     public List<Notification> getUserNotifications(AuthenticationUser user) {
-        return notificationRepository.findByRecipient(user);
+        return notificationRepository.findByRecipientOrderByCreationDateDesc(user);
     }
 
     public void sendLikeToPost(Long postId, Set<AuthenticationUser> likes) {
@@ -33,7 +33,7 @@ public class NotificationService {
         messagingTemplate.convertAndSend("/topic/comments/" + postId, comment);
     }
 
-    public void sendCommentNotification(AuthenticationUser author, AuthenticationUser recipient) {
+    public void sendCommentNotification(AuthenticationUser author, AuthenticationUser recipient, Long resourceId) {
         if (author.getId().equals(recipient.getId())) {
             return;
         }
@@ -41,7 +41,8 @@ public class NotificationService {
         Notification notification = new Notification(
                 author,
                 recipient,
-                NotificationType.COMMENT
+                NotificationType.COMMENT,
+                resourceId
         );
         notificationRepository.save(notification);
 
@@ -49,7 +50,7 @@ public class NotificationService {
     }
 
 
-    public void sendLikeNotification(AuthenticationUser author, AuthenticationUser recipient) {
+    public void sendLikeNotification(AuthenticationUser author, AuthenticationUser recipient, Long resourceId) {
         if (author.getId().equals(recipient.getId())) {
             return;
         }
@@ -57,10 +58,18 @@ public class NotificationService {
         Notification notification = new Notification(
                 author,
                 recipient,
-                NotificationType.LIKE
+                NotificationType.LIKE,
+                resourceId
         );
         notificationRepository.save(notification);
 
         messagingTemplate.convertAndSend("/topic/users/" + recipient.getId() + "/notifications", notification);
+    }
+
+    public Notification markNotificationAsRead(Long notificationId) {
+        Notification notification = notificationRepository.findById(notificationId).orElseThrow(() -> new IllegalArgumentException("Notification not found"));
+        notification.setRead(true);
+        messagingTemplate.convertAndSend("/topic/users/" + notification.getRecipient().getId() + "/notifications", notification);
+        return notificationRepository.save(notification);
     }
 }

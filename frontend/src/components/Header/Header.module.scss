@@ -74,6 +74,21 @@
     flex-direction: column;
     align-items: center;
   }
+
+  .notifications {
+    position: relative;
+
+    .badge {
+      position: absolute;
+      top: -0.5rem;
+      right: 0;
+      background-color: var(--primary-color);
+      color: white;
+      border-radius: 50%;
+      padding: 0.1rem 0.4rem;
+      font-size: 0.6rem;
+    }
+  }
 }
 
 @media screen and (width >= 1080px) {

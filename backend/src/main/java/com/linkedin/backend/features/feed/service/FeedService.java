@@ -67,7 +67,7 @@ public class FeedService {
             post.getLikes().remove(user);
         } else {
             post.getLikes().add(user);
-            notificationService.sendLikeNotification(user, post.getAuthor());
+            notificationService.sendLikeNotification(user, post.getAuthor(), post.getId());
         }
         Post savedPost = postRepository.save(post);
         notificationService.sendLikeToPost(postId, savedPost.getLikes());
@@ -81,7 +81,7 @@ public class FeedService {
 
         Comment comment = commentRepository.save(new Comment(post, user, content));
 
-        notificationService.sendCommentNotification(user, post.getAuthor());
+        notificationService.sendCommentNotification(user, post.getAuthor(), post.getId());
         notificationService.sendCommentToPost(postId, comment);
 
         return comment;
