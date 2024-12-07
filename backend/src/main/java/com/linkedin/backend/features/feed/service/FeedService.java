@@ -78,8 +78,13 @@ public class FeedService {
     public Comment addComment(Long postId, Long userId, String content) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("Post not found"));
         AuthenticationUser user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
-        Comment comment = new Comment(post, user, content);
-        return commentRepository.save(comment);
+
+        Comment comment = commentRepository.save(new Comment(post, user, content));
+
+        notificationService.sendCommentNotification(user, post.getAuthor());
+        notificationService.sendCommentToPost(postId, comment);
+
+        return comment;
     }
 
     public Comment editComment(Long commentId, Long userId, String newContent) {

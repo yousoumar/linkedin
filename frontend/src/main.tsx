@@ -10,6 +10,7 @@ import { ResetPassword } from "./features/authentication/pages/ResetPassword/Res
 import { Signup } from "./features/authentication/pages/Signup/Signup";
 import { VerifyEmail } from "./features/authentication/pages/VerifyEmail/VerifyEmail.tsx";
 import { Feed } from "./features/feed/pages/Feed/Feed.tsx";
+import { Notifications } from "./features/feed/pages/Notifications/Notifications.tsx";
 import "./index.scss";
 
 const router = createBrowserRouter([
@@ -38,7 +39,7 @@ const router = createBrowserRouter([
           },
           {
             path: "notifications",
-            element: <div>Notifications</div>,
+            element: <Notifications />,
           },
           {
             path: "profile/:id",

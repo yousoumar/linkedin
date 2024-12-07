@@ -40,15 +40,26 @@ export function Post({ post, setPosts }: PostProps) {
   const [postLiked, setPostLiked] = useState<boolean | undefined>(undefined);
 
   useEffect(() => {
-    webSocketClient?.subscribe(`/topic/likes/${post.id}`, (message) => {
+    const subscription = webSocketClient?.subscribe(`/topic/likes/${post.id}`, (message) => {
       const likes = JSON.parse(message.body);
       setLikes(likes);
       setPostLiked(likes.some((like: User) => like.id === user?.id));
     });
+    return () => subscription?.unsubscribe();
   }, [post.id, user?.id, webSocketClient]);
 
   useEffect(() => {
+    const subscription = webSocketClient?.subscribe(`/topic/comments/${post.id}`, (message) => {
+      const comment = JSON.parse(message.body);
+      setComments((prev) => [comment, ...prev]);
+    });
+
+    return () => subscription?.unsubscribe();
+  }, [post.id, webSocketClient]);
+
+  useEffect(() => {
     const fetchComments = async () => {
+      console.log("Fetching comments");
       await request<Comment[]>({
         endpoint: `/api/v1/feed/posts/${post.id}/comments`,
         onSuccess: (data) => setComments(data),
@@ -94,10 +105,7 @@ export function Post({ post, setPosts }: PostProps) {
       endpoint: `/api/v1/feed/posts/${post.id}/comments`,
       method: "POST",
       body: JSON.stringify({ content }),
-      onSuccess: (data) => {
-        setComments((prev) => [data, ...prev]);
-        setContent("");
-      },
+      onSuccess: () => {},
       onFailure: (error) => {
         console.error(error);
       },

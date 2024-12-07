@@ -52,7 +52,7 @@ export function Comment({ comment, deleteComment, editComment }: CommentProps) {
                 <div className={classes.title}>
                   {comment.author.position + " at " + comment.author.company}
                 </div>
-                <TimeAgo date={comment.creationDate} edited={!comment.updatedDate} />
+                <TimeAgo date={comment.creationDate} edited={!!comment.updatedDate} />
               </div>
             </button>
             {comment.author.id == user?.id && (
