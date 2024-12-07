@@ -4,9 +4,10 @@ import { request } from "../../../../utils/api";
 import { User } from "../../../authentication/contexts/AuthenticationContextProvider";
 import { LeftSidebar } from "../../components/LeftSidebar/LeftSidebar";
 import { RightSidebar } from "../../components/RightSidebar/RightSidebar";
+import { TimeAgo } from "../../components/TimeAgo/TimeAgo";
 import classes from "./Notifications.module.scss";
 
-export enum NotificationType {
+enum NotificationType {
   LIKE = "LIKE",
   COMMENT = "COMMENT",
 }
@@ -17,6 +18,7 @@ export interface Notification {
   read: boolean;
   type: NotificationType;
   resourceId: number;
+  creationDate: string;
 }
 
 export function Notifications() {
@@ -91,10 +93,15 @@ function Notification({
     >
       <img src={notification.actor.profilePicture} alt="" className={classes.avatar} />
 
-      <p>
+      <p
+        style={{
+          marginRight: "auto",
+        }}
+      >
         <strong>{notification.actor.firstName + " " + notification.actor.lastName}</strong>{" "}
         {notification.type === NotificationType.LIKE ? "liked" : "commented on"} your post.
       </p>
+      <TimeAgo date={notification.creationDate} />
     </button>
   );
 }
