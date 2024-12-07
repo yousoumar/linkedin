@@ -151,7 +151,9 @@ export function Post({ post, setPosts }: PostProps) {
       endpoint: `/api/v1/feed/posts/${id}`,
       method: "DELETE",
       onSuccess: () => {
-        setPosts((prev) => prev.filter((p) => p.id !== id));
+        if(setPosts){
+          setPosts((prev) => prev.filter((p) => p.id !== id));
+        }
       },
       onFailure: (error) => {
         console.error(error);
@@ -165,14 +167,16 @@ export function Post({ post, setPosts }: PostProps) {
       method: "PUT",
       body: JSON.stringify({ content, picture }),
       onSuccess: (data) => {
-        setPosts((prev) =>
-          prev.map((p) => {
-            if (p.id === post.id) {
-              return data;
-            }
-            return p;
-          })
-        );
+        if (setPosts) {
+          setPosts((prev) =>
+            prev.map((p) => {
+              if (p.id === post.id) {
+                return data;
+              }
+              return p;
+            })
+          );
+        }
         setShowMenu(false);
       },
       onFailure: (error) => {
