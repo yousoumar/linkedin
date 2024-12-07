@@ -49,7 +49,15 @@ export function Notifications() {
             setNotifications={setNotifications}
           />
         ))}
-        {notifications.length === 0 && <p>No notifications</p>}
+        {notifications.length === 0 && (
+          <p
+            style={{
+              padding: "1rem",
+            }}
+          >
+            No notifications
+          </p>
+        )}
       </div>
       <div className={classes.right}>
         <RightSidebar />
