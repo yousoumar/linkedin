@@ -105,7 +105,9 @@ export function Post({ post, setPosts }: PostProps) {
       endpoint: `/api/v1/feed/posts/${post.id}/comments`,
       method: "POST",
       body: JSON.stringify({ content }),
-      onSuccess: () => {},
+      onSuccess: () => {
+        setContent("");
+      },
       onFailure: (error) => {
         console.error(error);
       },
@@ -151,7 +153,7 @@ export function Post({ post, setPosts }: PostProps) {
       endpoint: `/api/v1/feed/posts/${id}`,
       method: "DELETE",
       onSuccess: () => {
-        if(setPosts){
+        if (setPosts) {
           setPosts((prev) => prev.filter((p) => p.id !== id));
         }
       },
