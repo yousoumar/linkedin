@@ -6,6 +6,7 @@ import {
   useAuthentication,
   User,
 } from "../../../authentication/contexts/AuthenticationContextProvider";
+import { useWebSocket } from "../../../ws/WebSocketContextProvider";
 import { Comment } from "../Comment/Comment";
 import { Madal } from "../Modal/Modal";
 import { TimeAgo } from "../TimeAgo/TimeAgo";
@@ -34,6 +35,7 @@ export function Post({ post, setPosts }: PostProps) {
   const { user } = useAuthentication();
   const [showMenu, setShowMenu] = useState(false);
   const [editing, setEditing] = useState(false);
+  const webSocketClient = useWebSocket();
 
   const [postLiked, setPostLiked] = useState<boolean | undefined>(undefined);
 
@@ -49,6 +51,44 @@ export function Post({ post, setPosts }: PostProps) {
     };
     fetchComments();
   }, [post.id]);
+
+  useEffect(() => {
+    const subscription = webSocketClient?.subscribe(`/topic/likes/${post.id}`, (message) => {
+      const likes = JSON.parse(message.body);
+      setLikes(likes);
+      setPostLiked(likes.some((like: User) => like.id === user?.id));
+    });
+    return () => subscription?.unsubscribe();
+  }, [post.id, user?.id, webSocketClient]);
+
+  useEffect(() => {
+    const subscription = webSocketClient?.subscribe(`/topic/comments/${post.id}`, (message) => {
+      const comment = JSON.parse(message.body);
+      setComments((prev) => {
+        const index = prev.findIndex((c) => c.id === comment.id);
+        if (index === -1) {
+          return [comment, ...prev];
+        }
+        return prev.map((c) => (c.id === comment.id ? comment : c));
+      });
+    });
+
+    return () => subscription?.unsubscribe();
+  }, [post.id, webSocketClient]);
+
+  useEffect(() => {
+    const subscription = webSocketClient?.subscribe(
+      `/topic/comments/${post.id}/delete`,
+      (message) => {
+        const comment = JSON.parse(message.body);
+        setComments((prev) => {
+          return prev.filter((c) => c.id !== comment.id);
+        });
+      }
+    );
+
+    return () => subscription?.unsubscribe();
+  }, [post.id, webSocketClient]);
 
   useEffect(() => {
     const fetchLikes = async () => {
@@ -67,18 +107,12 @@ export function Post({ post, setPosts }: PostProps) {
   }, [post.id, user?.id]);
 
   const like = async () => {
-    setPostLiked((prev) => !prev);
     await request<Post>({
       endpoint: `/api/v1/feed/posts/${post.id}/like`,
       method: "PUT",
-      onSuccess: () => {
-        setLikes((prev) =>
-          postLiked ? prev.filter((like) => like.id !== user?.id) : [user!, ...prev]
-        );
-      },
+      onSuccess: () => {},
       onFailure: (error) => {
         console.error(error);
-        setPostLiked((prev) => !prev);
       },
     });
   };
@@ -92,10 +126,7 @@ export function Post({ post, setPosts }: PostProps) {
       endpoint: `/api/v1/feed/posts/${post.id}/comments`,
       method: "POST",
       body: JSON.stringify({ content }),
-      onSuccess: (data) => {
-        setComments((prev) => [data, ...prev]);
-        setContent("");
-      },
+      onSuccess: () => setContent(""),
       onFailure: (error) => {
         console.error(error);
       },
