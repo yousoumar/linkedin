@@ -43,6 +43,24 @@ export function Conversation() {
   }, []);
 
   useEffect(() => {
+    const subscription = websocketClient?.subscribe(
+      `/topic/users/${user?.id}/conversations`,
+      (message) => {
+        const conversation = JSON.parse(message.body);
+        console.log(conversation);
+        setConversations((prevConversations) => {
+          const index = prevConversations.findIndex((c) => c.id === conversation.id);
+          if (index === -1) {
+            return [conversation, ...prevConversations];
+          }
+          return prevConversations.map((c) => (c.id === conversation.id ? conversation : c));
+        });
+      }
+    );
+    return () => subscription?.unsubscribe();
+  }, [user?.id, websocketClient]);
+
+  useEffect(() => {
     if (id == "new") {
       setConversation(null);
       request<User[]>({

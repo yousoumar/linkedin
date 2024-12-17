@@ -47,7 +47,7 @@ export function Conversations(props: ConversationsProps) {
       }
     );
     return () => subscription?.unsubscribe();
-  }, [conversations, setConversations, user?.id, websocketClient]);
+  }, [user?.id, websocketClient]);
 
   return (
     <div className={classes.root} {...props}>
