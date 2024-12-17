@@ -3,7 +3,7 @@ import classes from "./RightSidebar.module.scss";
 export function RightSidebar() {
   return (
     <div className={classes.root}>
-      <h3>Add to your feed</h3>
+      <h3>Add to your connexions</h3>
       <div className={classes.items}>
         <div className={classes.item}>
           <img src="https://i.pravatar.cc/300" alt="" className={classes.avatar} />
@@ -11,7 +11,7 @@ export function RightSidebar() {
             <div className={classes.name}>Anis Doe</div>
             <div className={classes.title}>HR at Botify</div>
             <Button size="medium" outline className={classes.button}>
-              + Follow
+              + Connect
             </Button>
           </div>
         </div>
@@ -25,7 +25,7 @@ export function RightSidebar() {
             <div className={classes.name}>Jana Corner</div>
             <div className={classes.title}>Software Engineer at BPNP</div>
             <Button size="medium" outline className={classes.button}>
-              + Follow
+              + Connect
             </Button>
           </div>
         </div>

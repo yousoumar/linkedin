@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { useAuthentication } from "../../features/authentication/contexts/AuthenticationContextProvider";
 import { Notification } from "../../features/feed/pages/Notifications/Notifications";
+import { Conversation } from "../../features/messaging/components/Conversations/Conversations";
 import { useWebSocket } from "../../features/ws/WebSocketContextProvider";
 import { request } from "../../utils/api";
 import { Input } from "../Input/Input";
@@ -19,7 +20,16 @@ export function Header() {
   const nonReadNotificationCount = notifications.filter(
     (notification) => !notification.read
   ).length;
-
+  const location = useLocation();
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const nonReadMessagesCount = conversations.reduce(
+    (acc, conversation) =>
+      acc +
+      conversation.messages.filter((message) => message.sender.id !== user?.id && !message.isRead)
+        .length,
+    0
+  );
+  const [loadingConversations, setLoadingConversations] = useState(false);
   useEffect(() => {
     const handleResize = () => {
       setShowNavigationMenu(window.innerWidth > 1080);
@@ -29,12 +39,42 @@ export function Header() {
   }, []);
 
   useEffect(() => {
+    setLoadingConversations(true);
+    request<Conversation[]>({
+      endpoint: "/api/v1/messaging/conversations",
+      onSuccess: (data) => {
+        setConversations(data);
+        setLoadingConversations(false);
+      },
+      onFailure: (error) => console.log(error),
+    });
+  }, [location.pathname]);
+
+  useEffect(() => {
     request<Notification[]>({
       endpoint: "/api/v1/notifications",
       onSuccess: setNotifications,
       onFailure: (error) => console.log(error),
     });
   }, []);
+
+  useEffect(() => {
+    const subscription = webSocketClient?.subscribe(
+      `/topic/users/${user?.id}/conversations`,
+      (message) => {
+        const conversation = JSON.parse(message.body);
+        setConversations((prevConversations) => {
+          const index = prevConversations.findIndex((c) => c.id === conversation.id);
+          if (index === -1) {
+            if (conversation.author.id === user?.id) return prevConversations;
+            return [conversation, ...prevConversations];
+          }
+          return prevConversations.map((c) => (c.id === conversation.id ? conversation : c));
+        });
+      }
+    );
+    return () => subscription?.unsubscribe();
+  }, [user?.id, webSocketClient]);
 
   useEffect(() => {
     const subscribtion = webSocketClient?.subscribe(
@@ -140,7 +180,7 @@ export function Header() {
                   <span>Jobs</span>
                 </NavLink>
               </li>
-              <li>
+              <li className={classes.messaging}>
                 <NavLink
                   onClick={() => {
                     setShowProfileMenu(false);
@@ -159,7 +199,14 @@ export function Header() {
                   >
                     <path d="M16 4H8a7 7 0 000 14h4v4l8.16-5.39A6.78 6.78 0 0023 11a7 7 0 00-7-7zm-8 8.25A1.25 1.25 0 119.25 11 1.25 1.25 0 018 12.25zm4 0A1.25 1.25 0 1113.25 11 1.25 1.25 0 0112 12.25zm4 0A1.25 1.25 0 1117.25 11 1.25 1.25 0 0116 12.25z"></path>
                   </svg>
-                  <span>Messaging</span>
+                  <div>
+                    {nonReadMessagesCount > 0 &&
+                    location.pathname !== "/messaging" &&
+                    !loadingConversations ? (
+                      <span className={classes.badge}>{nonReadMessagesCount}</span>
+                    ) : null}
+                    <span>Messaging</span>
+                  </div>
                 </NavLink>
               </li>
               <li className={classes.notifications}>

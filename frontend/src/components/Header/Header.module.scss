@@ -75,22 +75,23 @@
     align-items: center;
   }
 
-  .notifications {
+  .notifications,
+  .messaging {
     position: relative;
+  }
 
-    .badge {
-      position: absolute;
-      top: -0.5rem;
-      left: 0.5rem;
-      background-color: crimson;
-      color: white;
-      border-radius: 50%;
-      font-size: 0.6rem;
-      width: 1rem;
-      height: 1rem;
-      display: grid;
-      place-items: center;
-    }
+  .badge {
+    position: absolute;
+    top: -0.5rem;
+    left: 0.5rem;
+    background-color: crimson;
+    color: white;
+    border-radius: 50%;
+    font-size: 0.6rem;
+    width: 1rem;
+    height: 1rem;
+    display: grid;
+    place-items: center;
   }
 
   @media screen and (width >= 1080px) {
