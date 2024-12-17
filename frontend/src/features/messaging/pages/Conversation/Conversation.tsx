@@ -1,53 +1,63 @@
-import { Dispatch, FormEvent, SetStateAction, useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "../../../../components/Button/Button";
 import { Input } from "../../../../components/Input/Input";
 import { request } from "../../../../utils/api";
-import { User } from "../../../authentication/contexts/AuthenticationContextProvider";
+import {
+  useAuthentication,
+  User,
+} from "../../../authentication/contexts/AuthenticationContextProvider";
 import { useWebSocket } from "../../../ws/WebSocketContextProvider";
-import type { Conversation } from "../Conversations/Conversations";
-import { Messages } from "../Messages/Messages";
+import { Conversation as ConversationType } from "../../components/Conversations/Conversations";
+import { Messages } from "../../components/Messages/Messages";
 import classes from "./Conversation.module.scss";
-
-interface ConversationProps {
-  selectedConversation: Conversation | null;
-  setSelectedConversation: Dispatch<SetStateAction<Conversation | null>>;
-  user: User;
-  windowWidth: number;
-  setConversations: Dispatch<SetStateAction<Conversation[]>>;
-  conversations: Conversation[];
-  creatingNewConversation: boolean;
-  setCreatingNewConversation: Dispatch<SetStateAction<boolean>>;
-}
-
-export function Conversation({
-  selectedConversation,
-  setSelectedConversation,
-  user,
-  windowWidth,
-  creatingNewConversation,
-  setCreatingNewConversation,
-  setConversations,
-  conversations,
-}: ConversationProps) {
+export function Conversation() {
   const [postingMessage, setPostingMessage] = useState<boolean>(false);
   const [content, setContent] = useState<string>("");
   const [suggestingUsers, setSuggestingUsers] = useState<User[]>([]);
   const [search, setSearch] = useState<string>("");
   const [slectedUser, setSelectedUser] = useState<User | null>(null);
-  const [conversation, setConversation] = useState<Conversation | null>(selectedConversation);
+  const [conversation, setConversation] = useState<ConversationType | null>(null);
+  const [conversations, setConversations] = useState<ConversationType[]>([]);
   const websocketClient = useWebSocket();
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const creatingNewConversation = id === "new";
+
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const { user } = useAuthentication();
 
   useEffect(() => {
-    setConversation(selectedConversation);
-  }, [selectedConversation]);
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
-    request<User[]>({
-      endpoint: "/api/v1/authentication/users",
-      onSuccess: (data) => setSuggestingUsers(data),
+    request<ConversationType[]>({
+      endpoint: "/api/v1/messaging/conversations",
+      onSuccess: (data) => setConversations(data),
       onFailure: (error) => console.log(error),
     });
   }, []);
+
+  useEffect(() => {
+    if (id == "new") {
+      setConversation(null);
+      request<User[]>({
+        endpoint: "/api/v1/authentication/users",
+        onSuccess: (data) => setSuggestingUsers(data),
+        onFailure: (error) => console.log(error),
+      });
+    } else {
+      request<ConversationType>({
+        endpoint: `/api/v1/messaging/conversations/${id}`,
+        onSuccess: (data) => setConversation(data),
+        onFailure: () => navigate("/messaging"),
+      });
+    }
+  }, [id, navigate]);
 
   useEffect(() => {
     const subscription = websocketClient?.subscribe(
@@ -73,7 +83,7 @@ export function Conversation({
       method: "POST",
       body: JSON.stringify({
         receiverId:
-          conversation?.recipient.id == user.id
+          conversation?.recipient.id == user?.id
             ? conversation?.author.id
             : conversation?.recipient.id,
         content,
@@ -92,33 +102,23 @@ export function Conversation({
       content,
     };
     console.log(message);
-    await request<Conversation>({
+    await request<ConversationType>({
       endpoint: "/api/v1/messaging/conversations",
       method: "POST",
       body: JSON.stringify(message),
-      onSuccess: (conversation) => {
-        setSelectedConversation(conversation);
-        setConversations((prevConversations) => [conversation, ...prevConversations]);
-        setCreatingNewConversation(false);
-      },
+      onSuccess: (conversation) => navigate(`/messaging/conversations/${conversation.id}`),
       onFailure: (error) => console.log(error),
     });
   }
 
   const conversationUserToDisplay =
-    conversation?.recipient.id === user.id ? conversation.author : conversation?.recipient;
+    conversation?.recipient.id === user?.id ? conversation?.author : conversation?.recipient;
   return (
     <div className={classes.root}>
       {(conversation || creatingNewConversation) && (
         <>
           <div className={classes.header}>
-            <button
-              className={classes.back}
-              onClick={() => {
-                setSelectedConversation(null);
-                setCreatingNewConversation(false);
-              }}
-            >
+            <button className={classes.back} onClick={() => navigate("/messaging")}>
               {"<"}
             </button>
           </div>
@@ -183,8 +183,7 @@ export function Conversation({
                             (c) => c.recipient.id === user.id || c.author.id === user.id
                           );
                           if (conversation) {
-                            setSelectedConversation(conversation);
-                            setCreatingNewConversation(false);
+                            navigate(`/messaging/conversations/${conversation.id}`);
                           } else {
                             setSelectedUser(user);
                           }

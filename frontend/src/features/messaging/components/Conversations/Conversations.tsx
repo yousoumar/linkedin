@@ -1,4 +1,6 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { HTMLAttributes, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { request } from "../../../../utils/api";
 import {
   useAuthentication,
   User,
@@ -14,29 +16,30 @@ export interface Conversation {
   messages: Message[];
 }
 
-export function Conversations({
-  conversations,
-  selectedConversation,
-  setSelectedConversation,
-  setConversations,
-}: {
-  conversations: Conversation[];
-  setConversations: Dispatch<SetStateAction<Conversation[]>>;
-  selectedConversation: Conversation | null;
-  setSelectedConversation: Dispatch<SetStateAction<Conversation | null>>;
-}) {
+type ConversationsProps = HTMLAttributes<HTMLDivElement>;
+
+export function Conversations(props: ConversationsProps) {
+  const [conversations, setConversations] = useState<Conversation[]>([]);
   const { user } = useAuthentication();
   const websocketClient = useWebSocket();
+
+  useEffect(() => {
+    request<Conversation[]>({
+      endpoint: "/api/v1/messaging/conversations",
+      onSuccess: (data) => setConversations(data),
+      onFailure: (error) => console.log(error),
+    });
+  }, []);
 
   useEffect(() => {
     const subscription = websocketClient?.subscribe(
       `/topic/users/${user?.id}/conversations`,
       (message) => {
         const conversation = JSON.parse(message.body);
+        console.log(conversation);
         setConversations((prevConversations) => {
           const index = prevConversations.findIndex((c) => c.id === conversation.id);
           if (index === -1) {
-            if (conversation.author.id === user?.id) return prevConversations;
             return [conversation, ...prevConversations];
           }
           return prevConversations.map((c) => (c.id === conversation.id ? conversation : c));
@@ -44,28 +47,12 @@ export function Conversations({
       }
     );
     return () => subscription?.unsubscribe();
-  }, [conversations, setConversations, setSelectedConversation, user?.id, websocketClient]);
-
-  useEffect(() => {
-    setSelectedConversation((prevSelectedConversation) => {
-      if (!prevSelectedConversation) {
-        return null;
-      }
-      return conversations.find((c) => c.id === prevSelectedConversation.id) || null;
-    });
-  }, [conversations, selectedConversation, setSelectedConversation]);
+  }, [conversations, setConversations, user?.id, websocketClient]);
 
   return (
-    <div className={classes.root}>
+    <div className={classes.root} {...props}>
       {conversations.map((conversation) => {
-        return (
-          <ConversationItem
-            key={conversation.id}
-            conversation={conversation}
-            selectedConversation={selectedConversation}
-            setSelectedConversation={setSelectedConversation}
-          />
-        );
+        return <ConversationItem key={conversation.id} conversation={conversation} />;
       })}
       {conversations.length === 0 && (
         <div
@@ -83,45 +70,25 @@ export function Conversations({
 
 interface ConversationItemProps {
   conversation: Conversation;
-  selectedConversation: Conversation | null;
-  setSelectedConversation: (conversation: Conversation) => void;
 }
 
-function ConversationItem({
-  conversation,
-  selectedConversation,
-  setSelectedConversation,
-}: ConversationItemProps) {
+function ConversationItem({ conversation }: ConversationItemProps) {
   const { user } = useAuthentication();
+  const navigate = useNavigate();
+  const { id } = useParams();
   const conversationUserToDisplay =
     conversation.recipient.id === user?.id ? conversation.author : conversation.recipient;
-  const [unreadMessagesCount, setUnreadMessagesCount] = useState(
-    conversation.messages.filter((message) => message.receiver.id === user?.id && !message.isRead)
-      .length
-  );
-
-  useEffect(() => {
-    if (selectedConversation === conversation) {
-      setUnreadMessagesCount(0);
-    } else {
-      setUnreadMessagesCount(
-        conversation.messages.filter(
-          (message) => message.receiver.id === user?.id && !message.isRead
-        ).length
-      );
-    }
-  }, [selectedConversation, conversation, user?.id]);
+  const unreadMessagesCount = conversation.messages.filter(
+    (message) => message.receiver.id === user?.id && !message.isRead
+  ).length;
 
   return (
     <button
       key={conversation.id}
       className={`${classes.conversation} ${
-        selectedConversation === conversation ? classes.selected : ""
+        id && Number(id) === conversation.id ? classes.selected : ""
       }`}
-      onClick={() => {
-        setSelectedConversation(conversation);
-        setUnreadMessagesCount(0);
-      }}
+      onClick={() => navigate(`/messaging/conversations/${conversation.id}`)}
     >
       <img className={classes.avatar} src={conversationUserToDisplay.profilePicture} alt="" />
 

@@ -12,6 +12,7 @@ import { VerifyEmail } from "./features/authentication/pages/VerifyEmail/VerifyE
 import { Feed } from "./features/feed/pages/Feed/Feed";
 import { Notifications } from "./features/feed/pages/Notifications/Notifications";
 import { PostPage } from "./features/feed/pages/Post/Post";
+import { Conversation } from "./features/messaging/pages/Conversation/Conversation";
 import { Messaging } from "./features/messaging/pages/Messages/Messaging";
 import "./index.scss";
 
@@ -42,6 +43,12 @@ const router = createBrowserRouter([
           {
             path: "messaging",
             element: <Messaging />,
+            children: [
+              {
+                path: "conversations/:id",
+                element: <Conversation />,
+              },
+            ],
           },
           {
             path: "notifications",
