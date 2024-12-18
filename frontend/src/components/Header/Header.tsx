@@ -201,7 +201,7 @@ export function Header() {
                   </svg>
                   <div>
                     {nonReadMessagesCount > 0 &&
-                    location.pathname !== "/messaging" &&
+                    !location.pathname.includes("messaging") &&
                     !loadingConversations ? (
                       <span className={classes.badge}>{nonReadMessagesCount}</span>
                     ) : null}
