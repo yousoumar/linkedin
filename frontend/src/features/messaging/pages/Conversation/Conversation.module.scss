@@ -3,6 +3,11 @@
   grid-template-rows: auto auto 1fr auto;
   height: calc(100vh - 12rem);
 
+  &.new {
+    height: calc(100vh - 8rem);
+    grid-template-rows: auto 1fr auto;
+  }
+
   .header {
     padding: 1rem;
     border-bottom: 1px solid #e0e0e0;
@@ -41,7 +46,7 @@
   }
 
   .form {
-    padding: 1rem;
+    padding-inline: 1rem;
 
     .avatar {
       width: 3rem;
@@ -97,6 +102,10 @@
   @media screen and (width >= 1024px) {
     grid-template-rows: auto 1fr auto;
     height: calc(100vh - 8rem);
+
+    &.new {
+      grid-template-rows: 1fr auto;
+    }
 
     .header {
       display: none;

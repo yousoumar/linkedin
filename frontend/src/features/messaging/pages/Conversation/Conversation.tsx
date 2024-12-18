@@ -141,7 +141,7 @@ export function Conversation() {
   const conversationUserToDisplay =
     conversation?.recipient.id === user?.id ? conversation?.author : conversation?.recipient;
   return (
-    <div className={classes.root}>
+    <div className={`${classes.root} ${creatingNewConversation ? classes.new : ""}`}>
       {(conversation || creatingNewConversation) && (
         <>
           <div className={classes.header}>
@@ -166,9 +166,11 @@ export function Conversation() {
               </div>
             </div>
           )}
-          {!conversation && creatingNewConversation && (
+          {creatingNewConversation && (
             <form className={`${classes.form} ${classes.new}`} onSubmit={(e) => e.preventDefault()}>
-              <p>Starting a new conversation {slectedUser && "with:"}</p>
+              <p style={{ marginTop: "1rem" }}>
+                Starting a new conversation {slectedUser && "with:"}
+              </p>
               {!slectedUser && (
                 <Input
                   type="text"
@@ -231,14 +233,12 @@ export function Conversation() {
               )}
             </form>
           )}
-          {conversation ? (
+          {conversation && (
             <Messages
               messages={conversation.messages}
               user={user}
               conversationId={conversation.id}
             />
-          ) : (
-            <div></div>
           )}
           <form
             className={classes.form}
