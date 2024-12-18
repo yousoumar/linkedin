@@ -2,29 +2,30 @@ import { HTMLAttributes, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { request } from "../../../../utils/api";
 import {
+  IUser,
   useAuthentication,
-  User,
 } from "../../../authentication/contexts/AuthenticationContextProvider";
 import { useWebSocket } from "../../../ws/WebSocketContextProvider";
-import { Message } from "../Messages/Messages";
+import { IMessage } from "../Messages/Messages";
 import classes from "./Conversations.module.scss";
 
-export interface Conversation {
+export interface IConversation {
   id: number;
-  author: User;
-  recipient: User;
-  messages: Message[];
+  author: IUser;
+  recipient: IUser;
+  messages: IMessage[];
 }
 
-type ConversationsProps = HTMLAttributes<HTMLDivElement>;
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+interface IConversationsProps extends HTMLAttributes<HTMLDivElement> {}
 
-export function Conversations(props: ConversationsProps) {
-  const [conversations, setConversations] = useState<Conversation[]>([]);
+export function Conversations(props: IConversationsProps) {
+  const [conversations, setConversations] = useState<IConversation[]>([]);
   const { user } = useAuthentication();
   const websocketClient = useWebSocket();
 
   useEffect(() => {
-    request<Conversation[]>({
+    request<IConversation[]>({
       endpoint: "/api/v1/messaging/conversations",
       onSuccess: (data) => setConversations(data),
       onFailure: (error) => console.log(error),
@@ -69,7 +70,7 @@ export function Conversations(props: ConversationsProps) {
 }
 
 interface ConversationItemProps {
-  conversation: Conversation;
+  conversation: IConversation;
 }
 
 function ConversationItem({ conversation }: ConversationItemProps) {

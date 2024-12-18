@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useAuthentication } from "../../features/authentication/contexts/AuthenticationContextProvider";
-import { Notification } from "../../features/feed/pages/Notifications/Notifications";
-import { Conversation } from "../../features/messaging/components/Conversations/Conversations";
+import { INotification } from "../../features/feed/pages/Notifications/Notifications";
+import { IConversation } from "../../features/messaging/components/Conversations/Conversations";
 import { useWebSocket } from "../../features/ws/WebSocketContextProvider";
 import { request } from "../../utils/api";
 import { Input } from "../Input/Input";
@@ -16,12 +16,12 @@ export function Header() {
     window.innerWidth > 1080 ? true : false
   );
 
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notifications, setNotifications] = useState<INotification[]>([]);
   const nonReadNotificationCount = notifications.filter(
     (notification) => !notification.read
   ).length;
   const location = useLocation();
-  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [conversations, setConversations] = useState<IConversation[]>([]);
   const nonReadMessagesCount = conversations.reduce(
     (acc, conversation) =>
       acc +
@@ -38,7 +38,7 @@ export function Header() {
   }, []);
 
   useEffect(() => {
-    request<Conversation[]>({
+    request<IConversation[]>({
       endpoint: "/api/v1/messaging/conversations",
       onSuccess: (data) => setConversations(data),
       onFailure: (error) => console.log(error),
@@ -46,7 +46,7 @@ export function Header() {
   }, [location.pathname]);
 
   useEffect(() => {
-    request<Notification[]>({
+    request<INotification[]>({
       endpoint: "/api/v1/notifications",
       onSuccess: setNotifications,
       onFailure: (error) => console.log(error),

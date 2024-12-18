@@ -4,21 +4,21 @@ import { Button } from "../../../../components/Button/Button";
 import { Input } from "../../../../components/Input/Input";
 import { request } from "../../../../utils/api";
 import {
+  IUser,
   useAuthentication,
-  User,
 } from "../../../authentication/contexts/AuthenticationContextProvider";
 import { useWebSocket } from "../../../ws/WebSocketContextProvider";
-import { Conversation as ConversationType } from "../../components/Conversations/Conversations";
+import { IConversation } from "../../components/Conversations/Conversations";
 import { Messages } from "../../components/Messages/Messages";
 import classes from "./Conversation.module.scss";
 export function Conversation() {
   const [postingMessage, setPostingMessage] = useState<boolean>(false);
   const [content, setContent] = useState<string>("");
-  const [suggestingUsers, setSuggestingUsers] = useState<User[]>([]);
+  const [suggestingUsers, setSuggestingUsers] = useState<IUser[]>([]);
   const [search, setSearch] = useState<string>("");
-  const [slectedUser, setSelectedUser] = useState<User | null>(null);
-  const [conversation, setConversation] = useState<ConversationType | null>(null);
-  const [conversations, setConversations] = useState<ConversationType[]>([]);
+  const [slectedUser, setSelectedUser] = useState<IUser | null>(null);
+  const [conversation, setConversation] = useState<IConversation | null>(null);
+  const [conversations, setConversations] = useState<IConversation[]>([]);
   const websocketClient = useWebSocket();
   const { id } = useParams();
   const navigate = useNavigate();
@@ -35,7 +35,7 @@ export function Conversation() {
   }, []);
 
   useEffect(() => {
-    request<ConversationType[]>({
+    request<IConversation[]>({
       endpoint: "/api/v1/messaging/conversations",
       onSuccess: (data) => setConversations(data),
       onFailure: (error) => console.log(error),
@@ -63,13 +63,13 @@ export function Conversation() {
   useEffect(() => {
     if (id == "new") {
       setConversation(null);
-      request<User[]>({
+      request<IUser[]>({
         endpoint: "/api/v1/authentication/users",
         onSuccess: (data) => setSuggestingUsers(data),
         onFailure: (error) => console.log(error),
       });
     } else {
-      request<ConversationType>({
+      request<IConversation>({
         endpoint: `/api/v1/messaging/conversations/${id}`,
         onSuccess: (data) => setConversation(data),
         onFailure: () => navigate("/messaging"),
@@ -120,7 +120,7 @@ export function Conversation() {
       content,
     };
     console.log(message);
-    await request<ConversationType>({
+    await request<IConversation>({
       endpoint: "/api/v1/messaging/conversations",
       method: "POST",
       body: JSON.stringify(message),

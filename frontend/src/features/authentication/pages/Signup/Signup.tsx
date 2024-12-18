@@ -49,7 +49,7 @@ export function Signup() {
           {errorMessage && <p className={classes.error}>{errorMessage}</p>}
           <p className={classes.disclaimer}>
             By clicking Agree & Join or Continue, you agree to LinkedIn's{" "}
-            <a href="">User Agreement</a>, <a href="">Privacy Policy</a>, and{" "}
+            <a href="">IUser Agreement</a>, <a href="">Privacy Policy</a>, and{" "}
             <a href="">Cookie Policy</a>.
           </p>
           <Button disabled={isLoading} type="submit">

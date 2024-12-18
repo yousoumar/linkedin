@@ -2,12 +2,12 @@ import { HTMLAttributes, useEffect, useState } from "react";
 import { timeAgo } from "../../utils/date";
 import classes from "./TimeAgo.module.scss";
 
-interface TimeAgoProps extends HTMLAttributes<HTMLDivElement> {
+interface ITimeAgoProps extends HTMLAttributes<HTMLDivElement> {
   date: string;
   edited?: boolean;
 }
 
-export function TimeAgo({ date, edited, ...others }: TimeAgoProps) {
+export function TimeAgo({ date, edited, ...others }: ITimeAgoProps) {
   const [time, setTime] = useState(timeAgo(new Date(date)));
 
   useEffect(() => {

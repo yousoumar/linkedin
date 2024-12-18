@@ -1,12 +1,12 @@
 import { InputHTMLAttributes } from "react";
 import classes from "./Input.module.scss";
 
-type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & {
+interface IInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "size"> {
   label?: string;
   size?: "small" | "medium" | "large";
-};
+}
 
-export function Input({ label, size, width, ...others }: InputProps) {
+export function Input({ label, size, width, ...others }: IInputProps) {
   return (
     <div className={`${classes.root} ${classes[size || "large"]}`}>
       {label ? (
