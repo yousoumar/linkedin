@@ -1,7 +1,7 @@
 @use "sass:color";
 
 .root {
-  border-radius: 0.3rem;
+  border-radius: 0 1rem 1rem;
   padding: 1rem;
   width: 70%;
   background-color: #f5f5f5;
@@ -29,6 +29,7 @@
   &.sent {
     margin-left: auto;
     background-color: color.adjust(#f5f5f5, $lightness: -10%);
+    border-radius: 1rem 0 1rem 1rem;
 
     .top {
       border-color: color.adjust(#e0e0e0, $lightness: -10%);
