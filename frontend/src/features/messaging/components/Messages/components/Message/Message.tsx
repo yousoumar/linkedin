@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { request } from "../../../../../../utils/api";
 import { IUser } from "../../../../../authentication/contexts/AuthenticationContextProvider";
 import { TimeAgo } from "../../../../../feed/components/TimeAgo/TimeAgo";
@@ -12,6 +12,7 @@ interface IMessageProps {
 }
 
 export function Message({ message, user, conversationId }: IMessageProps) {
+  const messageRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!message.isRead && user?.id === message.receiver.id) {
       request<void>({
@@ -23,9 +24,12 @@ export function Message({ message, user, conversationId }: IMessageProps) {
     }
   }, [message.id, message.isRead, message.receiver.id, user?.id, conversationId]);
 
-  console.log(message);
+  useEffect(() => {
+    messageRef.current?.scrollIntoView();
+  }, []);
   return (
     <div
+      ref={messageRef}
       className={`${classes.root} ${
         message.sender.id === user?.id ? classes.sent : classes.received
       }`}

@@ -1,6 +1,7 @@
 .root {
   display: grid;
   grid-template-rows: auto auto 1fr auto;
+  height: calc(100vh - 12rem);
 
   .header {
     padding: 1rem;
@@ -95,6 +96,7 @@
 
   @media screen and (width >= 1024px) {
     grid-template-rows: auto 1fr auto;
+    height: calc(100vh - 8rem);
 
     .header {
       display: none;
