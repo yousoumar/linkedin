@@ -80,12 +80,21 @@ export function Conversation() {
   useEffect(() => {
     const subscription = websocketClient?.subscribe(
       `/topic/conversations/${conversation?.id}/messages`,
-      (message) => {
-        const newMessage = JSON.parse(message.body);
+      (data) => {
+        const message = JSON.parse(data.body);
+
         setConversation((prevConversation) => {
+          if (!prevConversation) return null;
+          const index = prevConversation.messages.findIndex((m) => m.id === message.id);
+          if (index === -1) {
+            return {
+              ...prevConversation,
+              messages: [...prevConversation.messages, message],
+            };
+          }
           return {
-            ...prevConversation!,
-            messages: [...prevConversation!.messages, newMessage],
+            ...prevConversation,
+            messages: prevConversation?.messages.map((m) => (m.id === message.id ? message : m)),
           };
         });
       }

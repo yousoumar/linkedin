@@ -23,6 +23,7 @@ export function Message({ message, user, conversationId }: IMessageProps) {
     }
   }, [message.id, message.isRead, message.receiver.id, user?.id, conversationId]);
 
+  console.log(message);
   return (
     <div
       className={`${classes.root} ${
