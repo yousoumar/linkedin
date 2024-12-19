@@ -38,7 +38,7 @@ export function Message({ message, user, conversationId }: IMessageProps) {
         <div className={classes.top}>
           <img
             className={classes.avatar}
-            src={message.sender.profilePicture}
+            src={message.sender.profilePicture || "/avatar.svg"}
             alt={`${message.sender.firstName} ${message.sender.lastName}`}
           />
           <div>

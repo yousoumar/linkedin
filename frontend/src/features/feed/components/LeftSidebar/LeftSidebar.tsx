@@ -11,7 +11,7 @@ export function LeftSidebar() {
         />
       </div>
       <div className={classes.avatar}>
-        <img src={user?.profilePicture || "/avatar.png"} alt="" />
+        <img src={user?.profilePicture || "/avatar.svg"} alt="" />
       </div>
       <div className={classes.name}>{user?.firstName + " " + user?.lastName}</div>
       <div className={classes.title}>{user?.position + " at " + user?.company}</div>

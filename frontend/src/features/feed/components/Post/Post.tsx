@@ -224,7 +224,7 @@ export function Post({ post, setPosts }: PostProps) {
             >
               <img
                 className={classes.avatar}
-                src={post.author.profilePicture || "/avatar.png"}
+                src={post.author.profilePicture || "/avatar.svg"}
                 alt=""
               />
             </button>

@@ -54,7 +54,7 @@ export function Feed() {
           >
             <img
               className={`${classes.top} ${classes.avatar}`}
-              src={user?.profilePicture || "/avatar.png"}
+              src={user?.profilePicture || "/avatar.svg"}
               alt=""
             />
           </button>

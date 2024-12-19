@@ -42,7 +42,7 @@ export function Comment({ comment, deleteComment, editComment }: ICommentProps) 
             >
               <img
                 className={classes.avatar}
-                src={comment.author.profilePicture || "/avatar.png"}
+                src={comment.author.profilePicture || "/avatar.svg"}
                 alt=""
               />
               <div>
