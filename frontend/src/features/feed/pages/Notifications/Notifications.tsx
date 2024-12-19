@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { usePageTitle } from "../../../../hooks/usePageTitle";
 import { request } from "../../../../utils/api";
 import { IUser } from "../../../authentication/contexts/AuthenticationContextProvider";
 import { LeftSidebar } from "../../components/LeftSidebar/LeftSidebar";
@@ -22,6 +23,7 @@ export interface INotification {
 }
 
 export function Notifications() {
+  usePageTitle("Notifications");
   const [notifications, setNotifications] = useState<INotification[]>([]);
 
   useEffect(() => {

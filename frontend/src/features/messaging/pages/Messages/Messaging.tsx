@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { usePageTitle } from "../../../../hooks/usePageTitle";
 import { RightSidebar } from "../../../feed/components/RightSidebar/RightSidebar";
 import { Conversations } from "../../components/Conversations/Conversations";
 import classes from "./Messaging.module.scss";
 
 export function Messaging() {
+  usePageTitle("Messaging");
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const location = useLocation();
   const creatingNewConversation = location.pathname.includes("new");
