@@ -45,6 +45,23 @@
     }
   }
 
+  .suggestions {
+    > button {
+      display: flex;
+      text-align: left;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.8rem;
+      width: 100%;
+
+      &:not(:last-child) {
+        border-bottom: 1px solid #e0e0e0;
+        padding-bottom: 0.5rem;
+        margin-bottom: 0.5rem;
+      }
+    }
+  }
+
   .form {
     padding-inline: 1rem;
 
@@ -72,29 +89,41 @@
       }
     }
 
-    textarea {
-      width: 100%;
-      padding: 1rem;
-      border: 1px solid #e0e0e0;
-      border-radius: 0.3rem;
-      resize: none;
-      height: 8rem;
-    }
-  }
+    &:not(.new) {
+      position: relative;
 
-  .suggestions {
-    > button {
-      display: flex;
-      text-align: left;
-      align-items: center;
-      gap: 1rem;
-      font-size: 0.8rem;
-      width: 100%;
+      input {
+        width: 100%;
+        height: 4rem;
+        padding: 1rem;
+        border: 1px solid #e0e0e0;
+        border-radius: 0.3rem;
+        margin-bottom: 1rem;
+      }
 
-      &:not(:last-child) {
-        border-bottom: 1px solid #e0e0e0;
-        padding-bottom: 0.5rem;
-        margin-bottom: 0.5rem;
+      button.send {
+        position: absolute;
+        right: 2rem;
+        top: 40%;
+        transform: translateY(-50%);
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        background-color: var(--primary-color);
+        display: grid;
+        place-items: center;
+        color: white;
+
+        svg {
+          width: 1rem;
+          height: 1rem;
+        }
+
+        &[disabled] {
+          background-color: #e0e0e0;
+          cursor: not-allowed;
+          color: black;
+        }
       }
     }
   }
