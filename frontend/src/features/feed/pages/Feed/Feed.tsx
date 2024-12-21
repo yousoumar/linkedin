@@ -6,7 +6,7 @@ import { request } from "../../../../utils/api.ts";
 import { useAuthentication } from "../../../authentication/contexts/AuthenticationContextProvider.tsx";
 import { LeftSidebar } from "../../components/LeftSidebar/LeftSidebar.tsx";
 import { Madal } from "../../components/Modal/Modal.tsx";
-import { Post } from "../../components/Post/Post.tsx";
+import { IPost, Post } from "../../components/Post/Post.tsx";
 import { RightSidebar } from "../../components/RightSidebar/RightSidebar.tsx";
 import classes from "./Feed.module.scss";
 
@@ -16,12 +16,12 @@ export function Feed() {
   const [feedContent, setFeedContent] = useState<"all" | "connexions">("connexions");
   const { user } = useAuthentication();
   const navigate = useNavigate();
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<IPost[]>([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchPosts = async () => {
-      await request<Post[]>({
+      await request<IPost[]>({
         endpoint: "/api/v1/feed" + (feedContent === "connexions" ? "" : "/posts"),
         onSuccess: (data) => setPosts(data),
         onFailure: (error) => setError(error),
@@ -31,7 +31,7 @@ export function Feed() {
   }, [feedContent]);
 
   const handlePost = async (content: string, picture: string) => {
-    await request<Post>({
+    await request<IPost>({
       endpoint: "/api/v1/feed/posts",
       method: "POST",
       body: JSON.stringify({ content, picture }),
@@ -54,7 +54,7 @@ export function Feed() {
           >
             <img
               className={`${classes.top} ${classes.avatar}`}
-              src={user?.profilePicture || "/avatar.png"}
+              src={user?.profilePicture || "/avatar.svg"}
               alt=""
             />
           </button>

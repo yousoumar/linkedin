@@ -4,7 +4,7 @@ import { useAuthentication } from "../../../../features/authentication/contexts/
 import { Button } from "../../../Button/Button";
 import classes from "./Profile.module.scss";
 
-interface ProfileProps {
+interface IProfileProps {
   showProfileMenu: boolean;
   setShowNavigationMenu: Dispatch<SetStateAction<boolean>>;
   setShowProfileMenu: Dispatch<SetStateAction<boolean>>;
@@ -13,7 +13,7 @@ export function Profile({
   showProfileMenu,
   setShowProfileMenu,
   setShowNavigationMenu,
-}: ProfileProps) {
+}: IProfileProps) {
   const { logout, user } = useAuthentication();
   const ref = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ export function Profile({
           }
         }}
       >
-        <img className={classes.avatar} src={user?.profilePicture || "/avatar.png"} alt="" />
+        <img className={classes.avatar} src={user?.profilePicture || "/avatar.svg"} alt="" />
         <div className={classes.name}>
           <div>{user?.firstName + " " + user?.lastName?.charAt(0) + "."}</div>
         </div>
@@ -52,7 +52,7 @@ export function Profile({
           <div className={classes.content}>
             <img
               className={`${classes.left} ${classes.avatar}`}
-              src={user?.profilePicture || "/avatar.png"}
+              src={user?.profilePicture || "/avatar.svg"}
               alt=""
             />
             <div className={classes.right}>

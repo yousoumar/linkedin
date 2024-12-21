@@ -1,7 +1,8 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { usePageTitle } from "../../../../hooks/usePageTitle";
 import { request } from "../../../../utils/api";
-import { User } from "../../../authentication/contexts/AuthenticationContextProvider";
+import { IUser } from "../../../authentication/contexts/AuthenticationContextProvider";
 import { LeftSidebar } from "../../components/LeftSidebar/LeftSidebar";
 import { RightSidebar } from "../../components/RightSidebar/RightSidebar";
 import { TimeAgo } from "../../components/TimeAgo/TimeAgo";
@@ -11,10 +12,10 @@ enum NotificationType {
   LIKE = "LIKE",
   COMMENT = "COMMENT",
 }
-export interface Notification {
+export interface INotification {
   id: number;
-  recipient: User;
-  actor: User;
+  recipient: IUser;
+  actor: IUser;
   read: boolean;
   type: NotificationType;
   resourceId: number;
@@ -22,11 +23,12 @@ export interface Notification {
 }
 
 export function Notifications() {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  usePageTitle("Notifications");
+  const [notifications, setNotifications] = useState<INotification[]>([]);
 
   useEffect(() => {
     const fetchNotifications = async () => {
-      await request<Notification[]>({
+      await request<INotification[]>({
         endpoint: "/api/v1/notifications",
         onSuccess: setNotifications,
         onFailure: (error) => console.log(error),
@@ -70,12 +72,11 @@ function Notification({
   notification,
   setNotifications,
 }: {
-  notification: Notification;
-
-  setNotifications: Dispatch<SetStateAction<Notification[]>>;
+  notification: INotification;
+  setNotifications: Dispatch<SetStateAction<INotification[]>>;
 }) {
   const navigate = useNavigate();
-  
+
   function markNotificationAsRead(notificationId: number) {
     request({
       endpoint: `/api/v1/notifications/${notificationId}`,

@@ -1,0 +1,57 @@
+.root {
+  display: grid;
+  gap: 2rem;
+  height: 100%;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+
+    button.new {
+      background-color: #f5f5f5;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      transition: background-color 0.3s;
+
+      &:hover {
+        background-color: #e0e0e0;
+      }
+    }
+  }
+
+  .messaging {
+    height: 100%;
+    background-color: white;
+    border-radius: 0.3rem;
+    border: 1px solid #e0e0e0;
+  }
+
+  .adds {
+    display: none;
+  }
+
+  @media screen and (width >= 1024px) {
+    .messaging {
+      display: grid;
+      grid-template-columns: 16rem 1fr;
+
+      .sidebar {
+        border-right: 1px solid #e0e0e0;
+      }
+    }
+  }
+
+  @media screen and (width >= 1135px) {
+    grid-template-columns: 1fr 20rem;
+    align-items: flex-start;
+
+    .adds {
+      display: block;
+    }
+  }
+}

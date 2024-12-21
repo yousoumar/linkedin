@@ -23,7 +23,7 @@ public class Message {
     private Conversation conversation;
 
     private String content;
-    private Boolean isRead;
+    private Boolean isRead = false;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

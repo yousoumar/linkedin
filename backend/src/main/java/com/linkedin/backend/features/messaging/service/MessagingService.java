@@ -95,6 +95,7 @@ public class MessagingService {
         if (!message.getIsRead()) {
             message.setIsRead(true);
             messageRepository.save(message);
+            notificationService.sendMessageToConversation(message.getConversation().getId(), message);
         }
     }
 }

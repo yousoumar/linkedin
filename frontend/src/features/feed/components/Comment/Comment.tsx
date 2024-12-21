@@ -2,28 +2,28 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "../../../../components/Input/Input";
 import {
+  IUser,
   useAuthentication,
-  User,
 } from "../../../authentication/contexts/AuthenticationContextProvider";
 
 import { TimeAgo } from "../TimeAgo/TimeAgo";
 import classes from "./Comment.module.scss";
 
-export interface Comment {
+export interface IComment {
   id: number;
   content: string;
-  author: User;
+  author: IUser;
   creationDate: string;
   updatedDate?: string;
 }
 
-interface CommentProps {
-  comment: Comment;
+interface ICommentProps {
+  comment: IComment;
   deleteComment: (commentId: number) => Promise<void>;
   editComment: (commentId: number, content: string) => Promise<void>;
 }
 
-export function Comment({ comment, deleteComment, editComment }: CommentProps) {
+export function Comment({ comment, deleteComment, editComment }: ICommentProps) {
   const navigate = useNavigate();
   const [showActions, setShowActions] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -42,7 +42,7 @@ export function Comment({ comment, deleteComment, editComment }: CommentProps) {
             >
               <img
                 className={classes.avatar}
-                src={comment.author.profilePicture || "/avatar.png"}
+                src={comment.author.profilePicture || "/avatar.svg"}
                 alt=""
               />
               <div>

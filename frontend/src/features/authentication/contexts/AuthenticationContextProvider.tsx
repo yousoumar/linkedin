@@ -3,11 +3,11 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { Loader } from "../../../components/Loader/Loader";
 import { request } from "../../../utils/api";
 
-interface AuthenticationResponse {
+interface IAuthenticationResponse {
   token: string;
   messgage: string;
 }
-export interface User {
+export interface IUser {
   id: string;
   email: string;
   emailVerified: boolean;
@@ -20,15 +20,15 @@ export interface User {
   profilePicture?: string;
 }
 
-interface AuthenticationContextType {
-  user: User | null;
-  setUser: Dispatch<SetStateAction<User | null>>;
+interface IAuthenticationContextType {
+  user: IUser | null;
+  setUser: Dispatch<SetStateAction<IUser | null>>;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   signup: (email: string, password: string) => Promise<void>;
 }
 
-const AuthenticationContext = createContext<AuthenticationContextType | null>(null);
+const AuthenticationContext = createContext<IAuthenticationContextType | null>(null);
 
 export function useAuthentication() {
   return useContext(AuthenticationContext)!;
@@ -36,7 +36,7 @@ export function useAuthentication() {
 
 export function AuthenticationContextProvider() {
   const location = useLocation();
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<IUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const isOnAuthPage =
@@ -45,7 +45,7 @@ export function AuthenticationContextProvider() {
     location.pathname === "/authentication/request-password-reset";
 
   const login = async (email: string, password: string) => {
-    await request<AuthenticationResponse>({
+    await request<IAuthenticationResponse>({
       endpoint: "/api/v1/authentication/login",
       method: "POST",
       body: JSON.stringify({ email, password }),
@@ -59,7 +59,7 @@ export function AuthenticationContextProvider() {
   };
 
   const signup = async (email: string, password: string) => {
-    await request<AuthenticationResponse>({
+    await request<IAuthenticationResponse>({
       endpoint: "/api/v1/authentication/register",
       method: "POST",
       body: JSON.stringify({ email, password }),
@@ -83,7 +83,7 @@ export function AuthenticationContextProvider() {
     }
     setIsLoading(true);
     const fetchUser = async () => {
-      await request<User>({
+      await request<IUser>({
         endpoint: "/api/v1/authentication/user",
         onSuccess: (data) => setUser(data),
         onFailure: (error) => {

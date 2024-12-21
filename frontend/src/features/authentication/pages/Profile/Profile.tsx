@@ -4,7 +4,7 @@ import { Button } from "../../../../components/Button/Button";
 import { Input } from "../../../../components/Input/Input";
 import { request } from "../../../../utils/api";
 import { Box } from "../../components/Box/Box";
-import { useAuthentication, User } from "../../contexts/AuthenticationContextProvider";
+import { IUser, useAuthentication } from "../../contexts/AuthenticationContextProvider";
 import classes from "./Profile.module.scss";
 export function Profile() {
   const [step, setStep] = useState(0);
@@ -31,7 +31,7 @@ export function Profile() {
       setError("Please fill in your location.");
       return;
     }
-    await request<User>({
+    await request<IUser>({
       endpoint: `/api/v1/authentication/profile/${user?.id}?firstName=${data.firstName}&lastName=${data.lastName}&company=${data.company}&position=${data.position}&location=${data.location}`,
       method: "PUT",
       body: JSON.stringify(data),

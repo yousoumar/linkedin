@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { Button } from "../../../../components/Button/Button";
 import { Input } from "../../../../components/Input/Input";
 import classes from "./Modal.module.scss";
-interface PostingMadalProps {
+interface IPostingMadalProps {
   showModal: boolean;
   content?: string;
   picture?: string;
@@ -17,7 +17,7 @@ export function Madal({
   content,
   picture,
   title,
-}: PostingMadalProps) {
+}: IPostingMadalProps) {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 

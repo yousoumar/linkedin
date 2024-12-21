@@ -1,0 +1,147 @@
+.root {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  height: calc(100vh - 12rem);
+
+  &.new {
+    height: calc(100vh - 8rem);
+    grid-template-rows: auto 1fr auto;
+  }
+
+  .header {
+    padding: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  button.back {
+    background-color: #f5f5f5;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: #e0e0e0;
+    }
+  }
+
+  .name {
+    font-weight: bold;
+  }
+
+  .top {
+    padding: 1rem;
+    display: grid;
+    align-items: center;
+    grid-template-columns: 4rem 1fr;
+    gap: 0.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    border-radius: 0 0 0.3rem 0.3rem;
+
+    .avatar {
+      width: 4rem;
+      height: 4rem;
+      border-radius: 50%;
+    }
+  }
+
+  .suggestions {
+    > button {
+      display: flex;
+      text-align: left;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.8rem;
+      width: 100%;
+
+      &:not(:last-child) {
+        border-bottom: 1px solid #e0e0e0;
+        padding-bottom: 0.5rem;
+        margin-bottom: 0.5rem;
+      }
+    }
+  }
+
+  .form {
+    padding-inline: 1rem;
+
+    .avatar {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 50%;
+    }
+
+    .top {
+      font-size: 0.8rem;
+      grid-template-columns: 3rem 1fr auto;
+      padding-inline: 0;
+    }
+
+    .close {
+      background-color: #f5f5f5;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      transition: background-color 0.3s;
+
+      &:hover {
+        background-color: #e0e0e0;
+      }
+    }
+
+    &:not(.new) {
+      position: relative;
+
+      input {
+        width: 100%;
+        height: 4rem;
+        padding: 1rem;
+        border: 1px solid #e0e0e0;
+        border-radius: 0.3rem;
+        margin-bottom: 1rem;
+      }
+
+      button.send {
+        position: absolute;
+        right: 2rem;
+        top: 40%;
+        transform: translateY(-50%);
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        background-color: var(--primary-color);
+        display: grid;
+        place-items: center;
+        color: white;
+
+        svg {
+          width: 1rem;
+          height: 1rem;
+        }
+
+        &[disabled] {
+          background-color: #e0e0e0;
+          cursor: not-allowed;
+          color: black;
+        }
+      }
+    }
+  }
+
+  @media screen and (width >= 1024px) {
+    grid-template-rows: auto 1fr auto;
+    height: calc(100vh - 8rem);
+
+    &.new {
+      grid-template-rows: 1fr auto;
+    }
+
+    .header {
+      display: none;
+    }
+
+    .welcome {
+      padding: 1.5rem 2rem;
+    }
+  }
+}
