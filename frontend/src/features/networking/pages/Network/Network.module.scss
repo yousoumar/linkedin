@@ -1,0 +1,106 @@
+.root {
+  display: grid;
+
+  .content {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .suggestions,
+  .sidebar {
+    background-color: white;
+    border-radius: 0.3rem;
+    border: 1px solid #e0e0e0;
+    padding: 1rem;
+  }
+
+  .sidebar {
+    display: none;
+
+    .buttons {
+      display: grid;
+      gap: 0.4rem;
+    }
+
+    a {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      &:not(:last-child) {
+        border-bottom: 1px solid #e0e0e0;
+        margin-bottom: 0.5rem;
+        padding-bottom: 0.5rem;
+      }
+
+      &.active {
+        color: var(--primary-color);
+      }
+    }
+
+    svg {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+
+    .stat {
+      margin-left: auto;
+      font-weight: bold;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #f5f5f5;
+    }
+  }
+
+  .suggestions {
+    .list {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+    }
+
+    .suggestion {
+      border-radius: 0.3rem;
+      border: 1px solid #e0e0e0;
+      text-align: center;
+      font-size: 0.9rem;
+
+      .cover {
+        margin-bottom: -3rem;
+        height: 5rem;
+        width: 100%;
+      }
+
+      .avatar {
+        width: 6rem;
+        height: 6rem;
+        border-radius: 50%;
+        margin-inline: auto;
+      }
+
+      .name {
+        font-weight: bold;
+      }
+
+      .connect {
+        width: max-content;
+        margin: 0.5rem auto;
+      }
+    }
+  }
+
+  @media screen and (width >= 1024px) {
+    grid-template-columns: 20rem 1fr;
+    gap: 1rem;
+    align-items: flex-start;
+
+    .sidebar {
+      display: block;
+      height: max-content;
+    }
+  }
+}

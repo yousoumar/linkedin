@@ -3,6 +3,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import { useAuthentication } from "../../features/authentication/contexts/AuthenticationContextProvider";
 import { INotification } from "../../features/feed/pages/Notifications/Notifications";
 import { IConversation } from "../../features/messaging/components/Conversations/Conversations";
+import { IConnection } from "../../features/networking/components/Connection/Connection";
 import { useWebSocket } from "../../features/ws/WebSocketContextProvider";
 import { request } from "../../utils/api";
 import { Input } from "../Input/Input";
@@ -29,6 +30,7 @@ export function Header() {
         .length,
     0
   );
+  const [invitations, setInvitations] = useState<IConnection[]>([]);
   useEffect(() => {
     const handleResize = () => {
       setShowNavigationMenu(window.innerWidth > 1080);
@@ -88,6 +90,65 @@ export function Header() {
     return () => subscribtion?.unsubscribe();
   }, [user?.id, webSocketClient]);
 
+  useEffect(() => {
+    request<IConnection[]>({
+      endpoint: "/api/v1/networking/connections?status=PENDING",
+      onSuccess: (data) =>
+        setInvitations(data.filter((c) => !c.seen && c.recipient.id === user?.id)),
+      onFailure: (error) => console.log(error),
+    });
+  }, [user?.id]);
+
+  useEffect(() => {
+    const subscription = webSocketClient?.subscribe(
+      "/topic/users/" + user?.id + "/connections/new",
+      (data) => {
+        const connection = JSON.parse(data.body);
+        setInvitations((connections) =>
+          connection.recipient.id === user?.id ? [connection, ...connections] : connections
+        );
+      }
+    );
+
+    return () => subscription?.unsubscribe();
+  }, [user?.id, webSocketClient]);
+
+  useEffect(() => {
+    const subscription = webSocketClient?.subscribe(
+      "/topic/users/" + user?.id + "/connections/accepted",
+      (data) => {
+        const connection = JSON.parse(data.body);
+        setInvitations((invitations) => invitations.filter((c) => c.id !== connection.id));
+      }
+    );
+
+    return () => subscription?.unsubscribe();
+  }, [user?.id, webSocketClient]);
+
+  useEffect(() => {
+    const subscription = webSocketClient?.subscribe(
+      "/topic/users/" + user?.id + "/connections/remove",
+      (data) => {
+        const connection = JSON.parse(data.body);
+        setInvitations((invitations) => invitations.filter((c) => c.id !== connection.id));
+      }
+    );
+
+    return () => subscription?.unsubscribe();
+  }, [user?.id, webSocketClient]);
+
+  useEffect(() => {
+    const subscription = webSocketClient?.subscribe(
+      "/topic/users/" + user?.id + "/connections/seen",
+      (data) => {
+        const connection = JSON.parse(data.body);
+        setInvitations((invitations) => invitations.filter((c) => c.id !== connection.id));
+      }
+    );
+
+    return () => subscription?.unsubscribe();
+  }, [user?.id, webSocketClient]);
+
   return (
     <header className={classes.root}>
       <div className={classes.container}>
@@ -131,7 +192,7 @@ export function Header() {
                   <span>Home</span>
                 </NavLink>
               </li>
-              <li>
+              <li className={classes.network}>
                 <NavLink
                   onClick={() => {
                     setShowProfileMenu(false);
@@ -150,29 +211,12 @@ export function Header() {
                   >
                     <path d="M12 16v6H3v-6a3 3 0 013-3h3a3 3 0 013 3zm5.5-3A3.5 3.5 0 1014 9.5a3.5 3.5 0 003.5 3.5zm1 2h-2a2.5 2.5 0 00-2.5 2.5V22h7v-4.5a2.5 2.5 0 00-2.5-2.5zM7.5 2A4.5 4.5 0 1012 6.5 4.49 4.49 0 007.5 2z"></path>
                   </svg>
-                  <span>Network</span>
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/jobs"
-                  className={({ isActive }) => (isActive ? classes.active : "")}
-                  onClick={() => {
-                    setShowProfileMenu(false);
-                    if (window.innerWidth <= 1080) {
-                      setShowNavigationMenu(false);
-                    }
-                  }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    focusable="false"
-                  >
-                    <path d="M17 6V5a3 3 0 00-3-3h-4a3 3 0 00-3 3v1H2v4a3 3 0 003 3h14a3 3 0 003-3V6zM9 5a1 1 0 011-1h4a1 1 0 011 1v1H9zm10 9a4 4 0 003-1.38V17a3 3 0 01-3 3H5a3 3 0 01-3-3v-4.38A4 4 0 005 14z"></path>
-                  </svg>
-                  <span>Jobs</span>
+                  <div>
+                    {invitations.length > 0 && !location.pathname.includes("network") ? (
+                      <span className={classes.badge}>{invitations.length}</span>
+                    ) : null}
+                    <span>Network</span>
+                  </div>
                 </NavLink>
               </li>
               <li className={classes.messaging}>

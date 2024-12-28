@@ -91,6 +91,21 @@ export function Post({ post, setPosts }: PostProps) {
   }, [post.id, webSocketClient]);
 
   useEffect(() => {
+    const subscription = webSocketClient?.subscribe(`/topic/posts/${post.id}/delete`, () => {
+      setPosts((prev) => prev.filter((p) => p.id !== post.id));
+    });
+    return () => subscription?.unsubscribe();
+  }, [post.id, setPosts, webSocketClient]);
+
+  useEffect(() => {
+    const subscription = webSocketClient?.subscribe(`/topic/posts/${post.id}/edit`, (data) => {
+      const post = JSON.parse(data.body);
+      setPosts((prev) => prev.map((p) => (p.id === post.id ? post : p)));
+    });
+    return () => subscription?.unsubscribe();
+  }, [post.id, setPosts, webSocketClient]);
+
+  useEffect(() => {
     const fetchLikes = async () => {
       await request<IUser[]>({
         endpoint: `/api/v1/feed/posts/${post.id}/likes`,

@@ -52,7 +52,11 @@ export function Conversation(props: ConversationItemProps) {
       className={`${classes.root} ${id && Number(id) === conversation.id ? classes.selected : ""}`}
       onClick={() => navigate(`/messaging/conversations/${conversation.id}`)}
     >
-      <img className={classes.avatar} src={conversationUserToDisplay.profilePicture} alt="" />
+      <img
+        className={classes.avatar}
+        src={conversationUserToDisplay.profilePicture || "/avatar.svg"}
+        alt=""
+      />
 
       {unreadMessagesCount > 0 && <div className={classes.unread}>{unreadMessagesCount}</div>}
 

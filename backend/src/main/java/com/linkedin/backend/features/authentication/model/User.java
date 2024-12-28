@@ -3,6 +3,7 @@ package com.linkedin.backend.features.authentication.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.linkedin.backend.features.feed.model.Post;
 import com.linkedin.backend.features.messaging.model.Conversation;
+import com.linkedin.backend.features.networking.model.Connection;
 import com.linkedin.backend.features.notifications.model.Notification;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity(name = "users")
-public class AuthenticationUser {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -36,7 +37,6 @@ public class AuthenticationUser {
     private String profilePicture = null;
     private Boolean profileComplete = false;
 
-
     @JsonIgnore
     @OneToMany(mappedBy = "recipient", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Notification> receivedNotifications;
@@ -49,7 +49,6 @@ public class AuthenticationUser {
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> posts;
 
-
     @JsonIgnore
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Conversation> conversationsAsAuthor;
@@ -58,13 +57,20 @@ public class AuthenticationUser {
     @OneToMany(mappedBy = "recipient", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Conversation> conversationsAsRecipient;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Connection> initiatedConnections;
 
-    public AuthenticationUser(String email, String password) {
+    @JsonIgnore
+    @OneToMany(mappedBy = "recipient", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Connection> receivedConnections;
+
+    public User(String email, String password) {
         this.email = email;
         this.password = password;
     }
 
-    public AuthenticationUser() {
+    public User() {
     }
 
     public Boolean getEmailVerified() {
@@ -137,7 +143,6 @@ public class AuthenticationUser {
         updateProfileCompletionStatus();
     }
 
-
     public String getLocation() {
         return location;
     }
@@ -169,7 +174,8 @@ public class AuthenticationUser {
     }
 
     public void updateProfileCompletionStatus() {
-        this.profileComplete = (this.firstName != null && this.lastName != null && this.company != null && this.position != null && this.location != null);
+        this.profileComplete = (this.firstName != null && this.lastName != null && this.company != null
+                && this.position != null && this.location != null);
     }
 
     public Boolean getProfileComplete() {
@@ -222,5 +228,21 @@ public class AuthenticationUser {
 
     public void setConversationsAsRecipient(List<Conversation> conversationsAsRecipient) {
         this.conversationsAsRecipient = conversationsAsRecipient;
+    }
+
+    public List<Connection> getInitiatedConnections() {
+        return initiatedConnections;
+    }
+
+    public void setInitiatedConnections(List<Connection> initiatedConnections) {
+        this.initiatedConnections = initiatedConnections;
+    }
+
+    public List<Connection> getReceivedConnections() {
+        return receivedConnections;
+    }
+
+    public void setReceivedConnections(List<Connection> receivedConnections) {
+        this.receivedConnections = receivedConnections;
     }
 }

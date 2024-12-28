@@ -101,7 +101,11 @@ function Notification({
         notification.read ? classes.notification : `${classes.notification} ${classes.unread}`
       }
     >
-      <img src={notification.actor.profilePicture} alt="" className={classes.avatar} />
+      <img
+        src={notification.actor.profilePicture || "/avatar.svg"}
+        alt=""
+        className={classes.avatar}
+      />
 
       <p
         style={{

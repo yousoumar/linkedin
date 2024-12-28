@@ -14,6 +14,9 @@ import { Notifications } from "./features/feed/pages/Notifications/Notifications
 import { PostPage } from "./features/feed/pages/Post/Post";
 import { Conversation } from "./features/messaging/pages/Conversation/Conversation";
 import { Messaging } from "./features/messaging/pages/Messages/Messaging";
+import { Connections } from "./features/networking/pages/Connections/Connections";
+import { Invitations } from "./features/networking/pages/Invitations/Invitations";
+import { Network } from "./features/networking/pages/Network/Network";
 import "./index.scss";
 
 const router = createBrowserRouter([
@@ -34,11 +37,21 @@ const router = createBrowserRouter([
           },
           {
             path: "network",
-            element: <div>Network</div>,
-          },
-          {
-            path: "jobs",
-            element: <div>Jobs</div>,
+            element: <Network />,
+            children: [
+              {
+                index: true,
+                element: <Navigate to="invitations" />,
+              },
+              {
+                path: "invitations",
+                element: <Invitations />,
+              },
+              {
+                path: "connections",
+                element: <Connections />,
+              },
+            ],
           },
           {
             path: "messaging",
@@ -57,10 +70,6 @@ const router = createBrowserRouter([
           {
             path: "profile/:id",
             element: <div>Profile</div>,
-          },
-          {
-            path: "settings",
-            element: <div>Settings & Privacy</div>,
           },
         ],
       },

@@ -72,10 +72,6 @@ export function Profile({
             >
               View Profile
             </Button>
-
-            <Link to="/settings" onClick={() => setShowProfileMenu(false)}>
-              Settings & Privacy
-            </Link>
             <Link
               to="/logout"
               onClick={(e) => {

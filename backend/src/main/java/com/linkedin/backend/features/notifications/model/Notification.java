@@ -1,11 +1,16 @@
 package com.linkedin.backend.features.notifications.model;
 
-import com.linkedin.backend.features.authentication.model.AuthenticationUser;
-import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
-
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+
+import com.linkedin.backend.features.authentication.model.User;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Notification {
@@ -13,9 +18,9 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    private AuthenticationUser recipient;
+    private User recipient;
     @ManyToOne
-    private AuthenticationUser actor;
+    private User actor;
     private boolean isRead;
     private NotificationType type;
     private Long resourceId;
@@ -23,7 +28,7 @@ public class Notification {
     @CreationTimestamp
     private LocalDateTime creationDate;
 
-    public Notification(AuthenticationUser actor, AuthenticationUser recipient, NotificationType type, Long resourceId) {
+    public Notification(User actor, User recipient, NotificationType type, Long resourceId) {
         this.actor = actor;
         this.recipient = recipient;
         this.type = type;
@@ -51,19 +56,19 @@ public class Notification {
         isRead = read;
     }
 
-    public AuthenticationUser getRecipient() {
+    public User getRecipient() {
         return recipient;
     }
 
-    public void setRecipient(AuthenticationUser recipient) {
+    public void setRecipient(User recipient) {
         this.recipient = recipient;
     }
 
-    public AuthenticationUser getActor() {
+    public User getActor() {
         return actor;
     }
 
-    public void setActor(AuthenticationUser actor) {
+    public void setActor(User actor) {
         this.actor = actor;
     }
 

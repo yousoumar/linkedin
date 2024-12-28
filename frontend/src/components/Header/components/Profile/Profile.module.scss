@@ -30,14 +30,14 @@
 
     .content {
       display: grid;
-      gap: 1rem;
-      grid-template-columns: 4rem 1fr;
+      gap: 0.5rem;
+      grid-template-columns: 3rem 1fr;
       align-items: center;
     }
 
     .avatar {
-      width: 4rem;
-      height: 4rem;
+      width: 3rem;
+      height: 3rem;
       border-radius: 50%;
       overflow: hidden;
     }

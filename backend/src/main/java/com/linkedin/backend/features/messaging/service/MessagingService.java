@@ -1,16 +1,18 @@
 package com.linkedin.backend.features.messaging.service;
 
-import com.linkedin.backend.features.authentication.model.AuthenticationUser;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.linkedin.backend.features.authentication.model.User;
 import com.linkedin.backend.features.authentication.service.AuthenticationService;
 import com.linkedin.backend.features.messaging.model.Conversation;
 import com.linkedin.backend.features.messaging.model.Message;
 import com.linkedin.backend.features.messaging.repository.ConversationRepository;
 import com.linkedin.backend.features.messaging.repository.MessageRepository;
 import com.linkedin.backend.features.notifications.service.NotificationService;
-import jakarta.transaction.Transactional;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
+import jakarta.transaction.Transactional;
 
 @Service
 public class MessagingService {
@@ -19,43 +21,46 @@ public class MessagingService {
     private final AuthenticationService authenticationService;
     private final NotificationService notificationService;
 
-    public MessagingService(ConversationRepository conversationRepository, MessageRepository messageRepository, AuthenticationService authenticationService, NotificationService notificationService) {
+    public MessagingService(ConversationRepository conversationRepository, MessageRepository messageRepository,
+            AuthenticationService authenticationService, NotificationService notificationService) {
         this.conversationRepository = conversationRepository;
         this.messageRepository = messageRepository;
         this.authenticationService = authenticationService;
         this.notificationService = notificationService;
     }
 
-    public List<Conversation> getConversationsOfUser(AuthenticationUser user) {
+    public List<Conversation> getConversationsOfUser(User user) {
         return conversationRepository.findByAuthorOrRecipient(user, user);
     }
 
-    public Conversation getConversation(AuthenticationUser user, Long conversationId) {
-        Conversation conversation = conversationRepository.findById(conversationId).orElseThrow(() -> new IllegalArgumentException("Conversation not found"));
-        if (!conversation.getAuthor().getId().equals(user.getId()) && !conversation.getRecipient().getId().equals(user.getId())) {
+    public Conversation getConversation(User user, Long conversationId) {
+        Conversation conversation = conversationRepository.findById(conversationId)
+                .orElseThrow(() -> new IllegalArgumentException("Conversation not found"));
+        if (!conversation.getAuthor().getId().equals(user.getId())
+                && !conversation.getRecipient().getId().equals(user.getId())) {
             throw new IllegalArgumentException("User not authorized to view conversation");
         }
         return conversation;
     }
 
     @Transactional
-    public Conversation createConversationAndAddMessage(AuthenticationUser sender, Long receiverId, String content) {
-        AuthenticationUser receiver = authenticationService.getUserById(receiverId);
+    public Conversation createConversationAndAddMessage(User sender, Long receiverId, String content) {
+        User receiver = authenticationService.getUserById(receiverId);
         conversationRepository.findByAuthorAndRecipient(sender, receiver).ifPresentOrElse(
                 conversation -> {
-                    throw new IllegalArgumentException("Conversation already exists, use the conversation id to send messages.");
+                    throw new IllegalArgumentException(
+                            "Conversation already exists, use the conversation id to send messages.");
                 },
                 () -> {
-                }
-        );
+                });
 
         conversationRepository.findByAuthorAndRecipient(receiver, sender).ifPresentOrElse(
                 conversation -> {
-                    throw new IllegalArgumentException("Conversation already exists, use the conversation id to send messages.");
+                    throw new IllegalArgumentException(
+                            "Conversation already exists, use the conversation id to send messages.");
                 },
                 () -> {
-                }
-        );
+                });
 
         Conversation conversation = conversationRepository.save(new Conversation(sender, receiver));
         Message message = new Message(sender, receiver, conversation, content);
@@ -65,15 +70,18 @@ public class MessagingService {
         return conversation;
     }
 
-    public Message addMessageToConversation(Long conversationId, AuthenticationUser sender, Long receiverId, String content) {
-        AuthenticationUser receiver = authenticationService.getUserById(receiverId);
-        Conversation conversation = conversationRepository.findById(conversationId).orElseThrow(() -> new IllegalArgumentException("Conversation not found"));
+    public Message addMessageToConversation(Long conversationId, User sender, Long receiverId, String content) {
+        User receiver = authenticationService.getUserById(receiverId);
+        Conversation conversation = conversationRepository.findById(conversationId)
+                .orElseThrow(() -> new IllegalArgumentException("Conversation not found"));
 
-        if (!conversation.getAuthor().getId().equals(sender.getId()) && !conversation.getRecipient().getId().equals(sender.getId())) {
+        if (!conversation.getAuthor().getId().equals(sender.getId())
+                && !conversation.getRecipient().getId().equals(sender.getId())) {
             throw new IllegalArgumentException("User not authorized to send message to this conversation");
         }
 
-        if (!conversation.getAuthor().getId().equals(receiver.getId()) && !conversation.getRecipient().getId().equals(receiver.getId())) {
+        if (!conversation.getAuthor().getId().equals(receiver.getId())
+                && !conversation.getRecipient().getId().equals(receiver.getId())) {
             throw new IllegalArgumentException("Receiver is not part of this conversation");
         }
 
@@ -85,8 +93,9 @@ public class MessagingService {
         return message;
     }
 
-    public void markMessageAsRead(AuthenticationUser user, Long messageId) {
-        Message message = messageRepository.findById(messageId).orElseThrow(() -> new IllegalArgumentException("Message not found"));
+    public void markMessageAsRead(User user, Long messageId) {
+        Message message = messageRepository.findById(messageId)
+                .orElseThrow(() -> new IllegalArgumentException("Message not found"));
 
         if (!message.getReceiver().getId().equals(user.getId())) {
             throw new IllegalArgumentException("User not authorized to mark message as read");

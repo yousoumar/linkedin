@@ -1,22 +1,29 @@
 package com.linkedin.backend.features.messaging.model;
 
-import com.linkedin.backend.features.authentication.model.AuthenticationUser;
-import jakarta.persistence.*;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import com.linkedin.backend.features.authentication.model.User;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 
 @Entity(name = "conversations")
 public class Conversation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @ManyToOne(optional = false)
-    private AuthenticationUser author;
 
     @ManyToOne(optional = false)
-    private AuthenticationUser recipient;
+    private User author;
+
+    @ManyToOne(optional = false)
+    private User recipient;
 
     @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> messages = new ArrayList<>();
@@ -24,7 +31,7 @@ public class Conversation {
     public Conversation() {
     }
 
-    public Conversation(AuthenticationUser author, AuthenticationUser recipient) {
+    public Conversation(User author, User recipient) {
         this.author = author;
         this.recipient = recipient;
     }
@@ -37,19 +44,19 @@ public class Conversation {
         this.id = id;
     }
 
-    public AuthenticationUser getAuthor() {
+    public User getAuthor() {
         return author;
     }
 
-    public void setAuthor(AuthenticationUser author) {
+    public void setAuthor(User author) {
         this.author = author;
     }
 
-    public AuthenticationUser getRecipient() {
+    public User getRecipient() {
         return recipient;
     }
 
-    public void setRecipient(AuthenticationUser recipient) {
+    public void setRecipient(User recipient) {
         this.recipient = recipient;
     }
 

@@ -3,7 +3,7 @@ package com.linkedin.backend.features.authentication.controller;
 import com.linkedin.backend.dto.Response;
 import com.linkedin.backend.features.authentication.dto.AuthenticationRequestBody;
 import com.linkedin.backend.features.authentication.dto.AuthenticationResponseBody;
-import com.linkedin.backend.features.authentication.model.AuthenticationUser;
+import com.linkedin.backend.features.authentication.model.User;
 import com.linkedin.backend.features.authentication.service.AuthenticationService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -32,24 +32,24 @@ public class AuthenticationController {
     }
 
     @DeleteMapping("/delete")
-    public Response deleteUser(@RequestAttribute("authenticatedUser") AuthenticationUser user) {
+    public Response deleteUser(@RequestAttribute("authenticatedUser") User user) {
         authenticationUserService.deleteUser(user.getId());
         return new Response("User deleted successfully.");
     }
 
     @GetMapping("/user")
-    public AuthenticationUser getUser(@RequestAttribute("authenticatedUser") AuthenticationUser user) {
+    public User getUser(@RequestAttribute("authenticatedUser") User user) {
         return user;
     }
 
     @PutMapping("/validate-email-verification-token")
-    public Response verifyEmail(@RequestParam String token, @RequestAttribute("authenticatedUser") AuthenticationUser user) {
+    public Response verifyEmail(@RequestParam String token, @RequestAttribute("authenticatedUser") User user) {
         authenticationUserService.validateEmailVerificationToken(token, user.getEmail());
         return new Response("Email verified successfully.");
     }
 
     @GetMapping("/send-email-verification-token")
-    public Response sendEmailVerificationToken(@RequestAttribute("authenticatedUser") AuthenticationUser user) {
+    public Response sendEmailVerificationToken(@RequestAttribute("authenticatedUser") User user) {
         authenticationUserService.sendEmailVerificationToken(user.getEmail());
         return new Response("Email verification token sent successfully.");
     }
@@ -61,14 +61,15 @@ public class AuthenticationController {
     }
 
     @PutMapping("/reset-password")
-    public Response resetPassword(@RequestParam String newPassword, @RequestParam String token, @RequestParam String email) {
+    public Response resetPassword(@RequestParam String newPassword, @RequestParam String token,
+            @RequestParam String email) {
         authenticationUserService.resetPassword(email, newPassword, token);
         return new Response("Password reset successfully.");
     }
 
     @PutMapping("/profile/{id}")
-    public AuthenticationUser updateUserProfile(
-            @RequestAttribute("authenticatedUser") AuthenticationUser user,
+    public User updateUserProfile(
+            @RequestAttribute("authenticatedUser") User user,
             @PathVariable Long id,
             @RequestParam(required = false) String firstName,
             @RequestParam(required = false) String lastName,
@@ -77,15 +78,15 @@ public class AuthenticationController {
             @RequestParam(required = false) String location) {
 
         if (!user.getId().equals(id)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User does not have permission to update this profile.");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "User does not have permission to update this profile.");
         }
 
         return authenticationUserService.updateUserProfile(id, firstName, lastName, company, position, location);
     }
 
-
     @GetMapping("/users")
-    public List<AuthenticationUser> getUsersWithoutAuthenticated(@RequestAttribute("authenticatedUser") AuthenticationUser user) {
+    public List<User> getUsersWithoutAuthenticated(@RequestAttribute("authenticatedUser") User user) {
         return authenticationUserService.getUsersWithoutAuthenticated(user);
     }
 }

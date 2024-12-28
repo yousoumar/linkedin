@@ -1,0 +1,32 @@
+.connection {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .avatar {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+  }
+
+  .name {
+    font-weight: bold;
+  }
+
+  .actions {
+    margin-left: auto;
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .action {
+    margin: 0;
+  }
+}
