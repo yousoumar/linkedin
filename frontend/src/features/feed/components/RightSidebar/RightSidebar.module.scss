@@ -6,7 +6,7 @@
 
   h3 {
     font-weight: bold;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
   }
 
   .items {
@@ -23,10 +23,15 @@
       width: 3rem;
       height: 3rem;
       border-radius: 50%;
+      overflow: hidden;
     }
 
     .name {
       font-weight: bold;
+    }
+
+    button {
+      text-align: left;
     }
 
     .button {

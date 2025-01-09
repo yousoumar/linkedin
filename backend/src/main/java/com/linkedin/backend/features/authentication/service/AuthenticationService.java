@@ -1,14 +1,5 @@
 package com.linkedin.backend.features.authentication.service;
 
-import java.security.SecureRandom;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
 import com.linkedin.backend.features.authentication.dto.AuthenticationRequestBody;
 import com.linkedin.backend.features.authentication.dto.AuthenticationResponseBody;
 import com.linkedin.backend.features.authentication.model.User;
@@ -16,10 +7,17 @@ import com.linkedin.backend.features.authentication.repository.UserRepository;
 import com.linkedin.backend.features.authentication.utils.EmailService;
 import com.linkedin.backend.features.authentication.utils.Encoder;
 import com.linkedin.backend.features.authentication.utils.JsonWebToken;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AuthenticationService {
@@ -35,7 +33,7 @@ public class AuthenticationService {
     private EntityManager entityManager;
 
     public AuthenticationService(UserRepository userRepository, Encoder encoder,
-            JsonWebToken jsonWebToken, EmailService emailService) {
+                                 JsonWebToken jsonWebToken, EmailService emailService) {
         this.userRepository = userRepository;
         this.encoder = encoder;
         this.jsonWebToken = jsonWebToken;
@@ -61,8 +59,8 @@ public class AuthenticationService {
             userRepository.save(user.get());
             String subject = "Email Verification";
             String body = String.format("Only one step to take full advantage of LinkedIn.\n\n"
-                    + "Enter this code to verify your email: " + "%s\n\n" + "The code will expire in " + "%s"
-                    + " minutes.",
+                            + "Enter this code to verify your email: " + "%s\n\n" + "The code will expire in " + "%s"
+                            + " minutes.",
                     emailVerificationToken, durationInMinutes);
             try {
                 emailService.sendEmail(email, subject, body);
@@ -113,9 +111,9 @@ public class AuthenticationService {
 
         String subject = "Email Verification";
         String body = String.format("""
-                Only one step to take full advantage of LinkedIn.
-
-                Enter this code to verify your email: %s. The code will expire in %s minutes.""",
+                        Only one step to take full advantage of LinkedIn.
+                        
+                        Enter this code to verify your email: %s. The code will expire in %s minutes.""",
                 emailVerificationToken, durationInMinutes);
         try {
             emailService.sendEmail(registerRequestBody.getEmail(), subject, body);
@@ -152,9 +150,9 @@ public class AuthenticationService {
             userRepository.save(user.get());
             String subject = "Password Reset";
             String body = String.format("""
-                    You requested a password reset.
-
-                    Enter this code to reset your password: %s. The code will expire in %s minutes.""",
+                            You requested a password reset.
+                            
+                            Enter this code to reset your password: %s. The code will expire in %s minutes.""",
                     passwordResetToken, durationInMinutes);
             try {
                 emailService.sendEmail(email, subject, body);
@@ -183,7 +181,7 @@ public class AuthenticationService {
     }
 
     public User updateUserProfile(Long userId, String firstName, String lastName, String company,
-            String position, String location) {
+                                  String position, String location, String profilePicture, String coverPicture, String about) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         if (firstName != null)
@@ -196,6 +194,13 @@ public class AuthenticationService {
             user.setPosition(position);
         if (location != null)
             user.setLocation(location);
+        if (profilePicture != null)
+            user.setProfilePicture(profilePicture);
+        if (coverPicture != null)
+            user.setCoverPicture(coverPicture);
+        if (about != null)
+            user.setAbout(about);
+
         return userRepository.save(user);
     }
 

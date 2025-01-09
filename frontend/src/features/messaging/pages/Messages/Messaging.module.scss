@@ -17,6 +17,8 @@
       height: 2rem;
       border-radius: 50%;
       transition: background-color 0.3s;
+      display: grid;
+      place-items: center;
 
       &:hover {
         background-color: #e0e0e0;

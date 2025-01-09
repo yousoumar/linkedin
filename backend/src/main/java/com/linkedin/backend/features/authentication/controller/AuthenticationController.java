@@ -37,11 +37,6 @@ public class AuthenticationController {
         return new Response("User deleted successfully.");
     }
 
-    @GetMapping("/user")
-    public User getUser(@RequestAttribute("authenticatedUser") User user) {
-        return user;
-    }
-
     @PutMapping("/validate-email-verification-token")
     public Response verifyEmail(@RequestParam String token, @RequestAttribute("authenticatedUser") User user) {
         authenticationUserService.validateEmailVerificationToken(token, user.getEmail());
@@ -62,7 +57,7 @@ public class AuthenticationController {
 
     @PutMapping("/reset-password")
     public Response resetPassword(@RequestParam String newPassword, @RequestParam String token,
-            @RequestParam String email) {
+                                  @RequestParam String email) {
         authenticationUserService.resetPassword(email, newPassword, token);
         return new Response("Password reset successfully.");
     }
@@ -75,18 +70,31 @@ public class AuthenticationController {
             @RequestParam(required = false) String lastName,
             @RequestParam(required = false) String company,
             @RequestParam(required = false) String position,
-            @RequestParam(required = false) String location) {
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) String profilePicture,
+            @RequestParam(required = false) String coverPicture,
+            @RequestParam(required = false) String about) {
 
         if (!user.getId().equals(id)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,
                     "User does not have permission to update this profile.");
         }
 
-        return authenticationUserService.updateUserProfile(id, firstName, lastName, company, position, location);
+        return authenticationUserService.updateUserProfile(id, firstName, lastName, company, position, location, profilePicture, coverPicture, about);
     }
 
     @GetMapping("/users")
     public List<User> getUsersWithoutAuthenticated(@RequestAttribute("authenticatedUser") User user) {
         return authenticationUserService.getUsersWithoutAuthenticated(user);
+    }
+
+    @GetMapping("/users/me")
+    public User getUser(@RequestAttribute("authenticatedUser") User user) {
+        return user;
+    }
+
+    @GetMapping("/users/{id}")
+    public User getUserById(@PathVariable Long id) {
+        return authenticationUserService.getUserById(id);
     }
 }

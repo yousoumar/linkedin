@@ -2,7 +2,10 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePageTitle } from "../../../../hooks/usePageTitle";
 import { request } from "../../../../utils/api";
-import { IUser } from "../../../authentication/contexts/AuthenticationContextProvider";
+import {
+  IUser,
+  useAuthentication,
+} from "../../../authentication/contexts/AuthenticationContextProvider";
 import { LeftSidebar } from "../../components/LeftSidebar/LeftSidebar";
 import { RightSidebar } from "../../components/RightSidebar/RightSidebar";
 import { TimeAgo } from "../../components/TimeAgo/TimeAgo";
@@ -25,7 +28,7 @@ export interface INotification {
 export function Notifications() {
   usePageTitle("Notifications");
   const [notifications, setNotifications] = useState<INotification[]>([]);
-
+  const { user } = useAuthentication();
   useEffect(() => {
     const fetchNotifications = async () => {
       await request<INotification[]>({
@@ -41,7 +44,7 @@ export function Notifications() {
   return (
     <div className={classes.root}>
       <div className={classes.left}>
-        <LeftSidebar />
+        <LeftSidebar user={user} />
       </div>
       <div className={classes.center}>
         {notifications.map((notification) => (

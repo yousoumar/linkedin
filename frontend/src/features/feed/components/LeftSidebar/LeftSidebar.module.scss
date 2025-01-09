@@ -36,12 +36,11 @@
 
   .name {
     font-weight: bold;
-    margin-block: 0.5rem;
   }
 
   .title {
     border-bottom: 1px solid #e0e0e0;
-    padding-bottom: 1rem;
+    padding-bottom: 0.5rem;
     font-size: 0.9rem;
   }
 
@@ -56,6 +55,7 @@
       justify-content: space-between;
       align-items: center;
       margin-top: 0.3rem;
+      width: 100%;
 
       .value {
         font-weight: bold;

@@ -15,12 +15,24 @@
 
     .avatar {
       width: 4rem;
+      min-width: 4rem;
       height: 4rem;
       border-radius: 50%;
     }
 
     .name {
       font-weight: bold;
+    }
+
+    .name,
+    .title,
+    .date {
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 

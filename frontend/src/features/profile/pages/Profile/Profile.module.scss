@@ -1,0 +1,38 @@
+.profile {
+  display: grid;
+  gap: 1rem;
+
+  .main {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .experience,
+  .education {
+    background-color: white;
+    border-radius: 0.3rem;
+    border: 1px solid #e0e0e0;
+    overflow: hidden;
+    padding: 1rem;
+  }
+
+  h2 {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  @media screen and (width >= 1024px) {
+    grid-template-columns: 1fr 20rem;
+    align-items: flex-start;
+
+    .sidebar {
+      display: block;
+      height: max-content;
+    }
+  }
+}

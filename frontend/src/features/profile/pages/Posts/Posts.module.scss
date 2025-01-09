@@ -1,0 +1,29 @@
+.posts {
+  display: grid;
+  gap: 1rem;
+
+  h1 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+  }
+
+  .main {
+    background-color: white;
+    border-radius: 0.3rem;
+    border: 1px solid #e0e0e0;
+    padding: 1rem;
+  }
+
+  .right {
+    display: none;
+  }
+
+  @media screen and (width >= 1024px) {
+    grid-template-columns: 14rem 1fr 20rem;
+
+    .right {
+      display: block;
+    }
+  }
+}

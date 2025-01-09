@@ -143,11 +143,13 @@ export function Conversation() {
           </div>
           {conversation && (
             <div className={classes.top}>
-              <img
-                className={classes.avatar}
-                src={conversationUserToDisplay?.profilePicture || "/avatar.svg"}
-                alt=""
-              />
+              <button onClick={() => navigate(`/profile/${conversationUserToDisplay?.id}`)}>
+                <img
+                  className={classes.avatar}
+                  src={conversationUserToDisplay?.profilePicture || "/avatar.svg"}
+                  alt=""
+                />
+              </button>
               <div>
                 <div className={classes.name}>
                   {conversationUserToDisplay?.firstName} {conversationUserToDisplay?.lastName}
@@ -176,7 +178,11 @@ export function Conversation() {
 
               {slectedUser && (
                 <div className={classes.top}>
-                  <img className={classes.avatar} src={slectedUser.profilePicture} alt="" />
+                  <img
+                    className={classes.avatar}
+                    src={slectedUser.profilePicture || "/avatar.svg"}
+                    alt=""
+                  />
                   <div>
                     <div className={classes.name}>
                       {slectedUser.firstName} {slectedUser.lastName}
@@ -211,7 +217,11 @@ export function Conversation() {
                           }
                         }}
                       >
-                        <img className={classes.avatar} src={user.profilePicture} alt="" />
+                        <img
+                          className={classes.avatar}
+                          src={user.profilePicture || "/avatar.svg"}
+                          alt=""
+                        />
                         <div>
                           <div className={classes.name}>
                             {user.firstName} {user.lastName}

@@ -73,6 +73,11 @@ public class ConnectionService {
         return connectionRepository.findConnectionsByUserAndStatus(user, status != null ? status : Status.ACCEPTED);
     }
 
+    public List<Connection> getUserConnections(Long userId, Status status) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        return connectionRepository.findConnectionsByUserAndStatus(user, status != null ? status : Status.ACCEPTED);
+    }
 
     public List<User> getConnectionSuggestions(User user) {
         List<User> allUsers = userRepository.findAllByIdNot(user.getId());
@@ -81,7 +86,7 @@ public class ConnectionService {
         Set<Long> connectedUserIds = userConnections.stream()
                 .flatMap(connection -> Stream.of(connection.getAuthor().getId(), connection.getRecipient().getId()))
                 .collect(Collectors.toSet());
-        
+
         return allUsers.stream()
                 .filter(u -> !connectedUserIds.contains(u.getId()))
                 .collect(Collectors.toList());
@@ -100,4 +105,6 @@ public class ConnectionService {
         notificationService.sendConnectionSeenNotification(connection.getRecipient().getId(), connection);
         return connectionRepository.save(connection);
     }
+
+
 }

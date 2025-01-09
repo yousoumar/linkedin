@@ -250,7 +250,11 @@ export function Post({ post, setPosts }: PostProps) {
               <div className={classes.title}>
                 {post.author.position + " at " + post.author.company}
               </div>
-              <TimeAgo date={post.creationDate} edited={!!post.updatedDate} />
+              <TimeAgo
+                date={post.creationDate}
+                edited={!!post.updatedDate}
+                className={classes.date}
+              />
             </div>
           </div>
           <div>

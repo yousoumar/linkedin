@@ -19,6 +19,8 @@
     height: 2rem;
     border-radius: 50%;
     transition: background-color 0.3s;
+    display: grid;
+    place-items: center;
 
     &:hover {
       background-color: #e0e0e0;
@@ -33,14 +35,14 @@
     padding: 1rem;
     display: grid;
     align-items: center;
-    grid-template-columns: 4rem 1fr;
+    grid-template-columns: 3rem 1fr;
     gap: 0.5rem;
     border-bottom: 1px solid #e0e0e0;
     border-radius: 0 0 0.3rem 0.3rem;
 
     .avatar {
-      width: 4rem;
-      height: 4rem;
+      width: 3rem;
+      height: 3rem;
       border-radius: 50%;
     }
   }
@@ -83,6 +85,8 @@
       height: 2rem;
       border-radius: 50%;
       transition: background-color 0.3s;
+      display: grid;
+      place-items: center;
 
       &:hover {
         background-color: #e0e0e0;

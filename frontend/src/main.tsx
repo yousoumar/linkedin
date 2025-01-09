@@ -5,7 +5,7 @@ import { ApplicationLayout } from "./components/ApplicationLayout/ApplicationLay
 import { AuthenticationLayout } from "./features/authentication/components/AuthenticationLayout/AuthenticationLayout";
 import { AuthenticationContextProvider } from "./features/authentication/contexts/AuthenticationContextProvider";
 import { Login } from "./features/authentication/pages/Login/Login";
-import { Profile } from "./features/authentication/pages/Profile/Profile";
+import { Profile as LoginProfile } from "./features/authentication/pages/Profile/Profile";
 import { ResetPassword } from "./features/authentication/pages/ResetPassword/ResetPassword";
 import { Signup } from "./features/authentication/pages/Signup/Signup";
 import { VerifyEmail } from "./features/authentication/pages/VerifyEmail/VerifyEmail";
@@ -17,6 +17,8 @@ import { Messaging } from "./features/messaging/pages/Messages/Messaging";
 import { Connections } from "./features/networking/pages/Connections/Connections";
 import { Invitations } from "./features/networking/pages/Invitations/Invitations";
 import { Network } from "./features/networking/pages/Network/Network";
+import { Posts } from "./features/profile/pages/Posts/Posts";
+import { Profile } from "./features/profile/pages/Profile/Profile";
 import "./index.scss";
 
 const router = createBrowserRouter([
@@ -69,7 +71,11 @@ const router = createBrowserRouter([
           },
           {
             path: "profile/:id",
-            element: <div>Profile</div>,
+            element: <Profile />,
+          },
+          {
+            path: "profile/:id/posts",
+            element: <Posts />,
           },
         ],
       },
@@ -95,7 +101,7 @@ const router = createBrowserRouter([
           },
           {
             path: "profile/:id",
-            element: <Profile />,
+            element: <LoginProfile />,
           },
         ],
       },
