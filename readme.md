@@ -35,6 +35,21 @@ _Windows:_
 gradlew.bat build -t -x test
 ```
 
+Configure environment variables for OAuth 2.0 and OpenID connect:
+
+_Mac/Linux:_
+
+```
+export OAUTH_GOOGLE_CLIENT_ID=your_google_client_id
+export OAUTH_GOOGLE_CLIENT_SECRET=your_google_client_secret
+```
+
+_Windows:_
+
+```
+set OAUTH_GOOGLE_CLIENT_ID=your_google_client_id
+set OAUTH_GOOGLE_CLIENT_SECRET=your_google_client_secret
+```
 Run the backend:
 
 _Mac/Linux:_
@@ -70,6 +85,7 @@ _Windows:_
 ```
 copy .env.example .env
 ```
+⚠️: make sure all variables are populated.
 
 Install dependencies:
 

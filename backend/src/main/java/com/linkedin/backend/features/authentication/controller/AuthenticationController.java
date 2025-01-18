@@ -1,6 +1,7 @@
 package com.linkedin.backend.features.authentication.controller;
 
 import com.linkedin.backend.dto.Response;
+import com.linkedin.backend.features.authentication.dto.AuthenticationOauthRequestBody;
 import com.linkedin.backend.features.authentication.dto.AuthenticationRequestBody;
 import com.linkedin.backend.features.authentication.dto.AuthenticationResponseBody;
 import com.linkedin.backend.features.authentication.model.User;
@@ -25,6 +26,12 @@ public class AuthenticationController {
     public AuthenticationResponseBody loginPage(@Valid @RequestBody AuthenticationRequestBody loginRequestBody) {
         return authenticationUserService.login(loginRequestBody);
     }
+
+    @PostMapping("/oauth/google/login")
+    public AuthenticationResponseBody googleLogin(@RequestBody AuthenticationOauthRequestBody oauth2RequestBody) {
+        return authenticationUserService.googleLoginOrSignup(oauth2RequestBody.code(), oauth2RequestBody.page());
+    }
+
 
     @PostMapping("/register")
     public AuthenticationResponseBody registerPage(@Valid @RequestBody AuthenticationRequestBody registerRequestBody) {

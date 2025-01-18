@@ -12,11 +12,11 @@ export function Profile() {
   const { user, setUser } = useAuthentication();
   const [error, setError] = useState("");
   const [data, setData] = useState({
-    firstName: "",
-    lastName: "",
-    company: "",
-    position: "",
-    location: "",
+    firstName: user?.firstName || "",
+    lastName: user?.lastName || "",
+    company: user?.company || "",
+    position: user?.position || "",
+    location: user?.location || "",
   });
   const onSubmit = async () => {
     if (!data.firstName || !data.lastName) {
@@ -56,6 +56,7 @@ export function Profile() {
               name="firstName"
               placeholder="Jhon"
               onChange={(e) => setData((prev) => ({ ...prev, firstName: e.target.value }))}
+              value={data.firstName}
             ></Input>
             <Input
               onFocus={() => setError("")}
@@ -64,6 +65,7 @@ export function Profile() {
               name="lastName"
               placeholder="Doe"
               onChange={(e) => setData((prev) => ({ ...prev, lastName: e.target.value }))}
+              value={data.lastName}
             ></Input>
           </div>
         )}
@@ -75,10 +77,12 @@ export function Profile() {
               name="company"
               placeholder="Docker Inc"
               onChange={(e) => setData((prev) => ({ ...prev, company: e.target.value }))}
+              value={data.company}
             ></Input>
             <Input
               onFocus={() => setError("")}
               onChange={(e) => setData((prev) => ({ ...prev, position: e.target.value }))}
+              value={data.position}
               label="Latest position"
               name="position"
               placeholder="Software Engineer"
@@ -91,6 +95,7 @@ export function Profile() {
             label="Location"
             name="location"
             placeholder="San Francisco, CA"
+            value={data.location}
             onChange={(e) => setData((prev) => ({ ...prev, location: e.target.value }))}
           ></Input>
         )}

@@ -11,6 +11,11 @@
   font-weight: bold;
   transition: 0.3s;
 
+  svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
   &.large {
     padding: 1rem;
   }

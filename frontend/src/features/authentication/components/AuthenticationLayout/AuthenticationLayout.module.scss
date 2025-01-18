@@ -16,6 +16,13 @@
   }
 
   header {
+    background: white;
+    border: 1px solid #e0e0e0;
+
+    .container {
+      padding-block: 1rem;
+    }
+
     a {
       display: block;
       width: max-content;
@@ -24,6 +31,11 @@
 
   .logo {
     width: 7rem;
+  }
+
+  main {
+    display: grid;
+    align-items: center;
   }
 
   h1 {
