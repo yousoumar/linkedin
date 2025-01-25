@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../../../components/Button/Button.tsx";
+import { Loader } from "../../../../components/Loader/Loader.tsx";
 import { usePageTitle } from "../../../../hooks/usePageTitle.tsx";
 import { request } from "../../../../utils/api.ts";
 import { useAuthentication } from "../../../authentication/contexts/AuthenticationContextProvider.tsx";
@@ -14,6 +15,7 @@ import classes from "./Feed.module.scss";
 export function Feed() {
   usePageTitle("Feed");
   const [showPostingModal, setShowPostingModal] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { user } = useAuthentication();
   const navigate = useNavigate();
   const [posts, setPosts] = useState<IPost[]>([]);
@@ -24,7 +26,10 @@ export function Feed() {
     const fetchPosts = async () => {
       await request<IPost[]>({
         endpoint: "/api/v1/feed",
-        onSuccess: (data) => setPosts(data),
+        onSuccess: (data) => {
+          setPosts(data);
+          setLoading(false);
+        },
         onFailure: (error) => setError(error),
       });
     };
@@ -78,15 +83,18 @@ export function Feed() {
           />
         </div>
         {error && <div className={classes.error}>{error}</div>}
-
-        <div className={classes.feed}>
-          {posts.map((post) => (
-            <Post key={post.id} post={post} setPosts={setPosts} />
-          ))}
-          {posts.length === 0 && (
-            <p>Start connecting with poople to build a feed that matters to you.</p>
-          )}
-        </div>
+        {loading ? (
+          <Loader />
+        ) : (
+          <div className={classes.feed}>
+            {posts.map((post) => (
+              <Post key={post.id} post={post} setPosts={setPosts} />
+            ))}
+            {posts.length === 0 && (
+              <p>Start connecting with poople to build a feed that matters to you.</p>
+            )}
+          </div>
+        )}
       </div>
       <div className={classes.right}>
         <RightSidebar />

@@ -64,3 +64,5 @@ nbdist/
 .nb-gradle/
 
 .env
+
+lucene

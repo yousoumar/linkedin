@@ -50,11 +50,15 @@ export function Profile() {
 
         <div className={classes.experience}>
           <h2>Experience</h2>
-          <p>TODO()</p>
+          <p>TODO</p>
         </div>
         <div className={classes.education}>
           <h2>Education</h2>
-          <p>TODO()</p>
+          <p>TODO</p>
+        </div>
+        <div className={classes.skills}>
+          <h2>Skills</h2>
+          <p>TODO</p>
         </div>
       </section>
       <div className={classes.sidebar}>
