@@ -18,9 +18,9 @@ import java.util.*;
 public class LoadDatabaseConfiguration {
     private static final int NUM_USERS = 100;
     private static final int MIN_POSTS_PER_USER = 1;
-    private static final int MAX_POSTS_PER_USER = 10;
-    private static final int MIN_CONNECTIONS_PER_USER = 5;
-    private static final int MAX_CONNECTIONS_PER_USER = 20;
+    private static final int MAX_POSTS_PER_USER = 5;
+    private static final int MIN_CONNECTIONS_PER_USER = 2;
+    private static final int MAX_CONNECTIONS_PER_USER = 5;
     private final Encoder encoder;
     private final Random random = new Random();
 
@@ -97,13 +97,12 @@ public class LoadDatabaseConfiguration {
         }
 
         users.addAll(List.of(
-                createUser("john.doe@example.com", "john", "John", "Doe", "Software Engineer", "Docker Inc",
-                        "San Francisco, CA",
+                createUser("john.doe@example.com", "john", "John", "Doe", positions.get(random.nextInt(positions.size())), companies.get(random.nextInt(companies.size())), locations.get(random.nextInt(locations.size())),
                         "https://images.unsplash.com/photo-1633332755192-727a05c4013d"),
-                createUser("anne.claire@example.com", "anne", "Anne", "Claire", "HR Manager", "eToro", "Paris, Fr",
+                createUser("anne.claire@example.com", "anne", "Anne", "Claire", positions.get(random.nextInt(positions.size())), companies.get(random.nextInt(companies.size())), locations.get(random.nextInt(locations.size())),
                         "https://images.unsplash.com/photo-1494790108377-be9c29b29330"),
-                createUser("arnauld.manner@example.com", "arnauld", "Arnauld", "Manner", "Product Manager", "Arc",
-                        "Dakar, SN",
+                createUser("arnauld.manner@example.com", "arnauld", "Arnauld", "Manner", positions.get(random.nextInt(positions.size())), companies.get(random.nextInt(companies.size())),
+                        locations.get(random.nextInt(locations.size())),
                         "https://images.unsplash.com/photo-1640960543409-dbe56ccc30e2")
         ));
 

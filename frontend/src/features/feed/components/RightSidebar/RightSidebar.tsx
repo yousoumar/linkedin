@@ -12,10 +12,9 @@ export function RightSidebar() {
 
   useEffect(() => {
     request<IUser[]>({
-      endpoint: "/api/v1/networking/suggestions",
+      endpoint: "/api/v1/networking/suggestions?limit=2",
       onSuccess: (data) => {
-        const shuffled = data.sort(() => 0.5 - Math.random());
-        setSuggestions(shuffled.slice(0, 2));
+        setSuggestions(data);
       },
       onFailure: (error) => console.log(error),
     });

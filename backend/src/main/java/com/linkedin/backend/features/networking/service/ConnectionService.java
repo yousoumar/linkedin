@@ -9,9 +9,6 @@ import com.linkedin.backend.features.notifications.service.NotificationService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class ConnectionService {
@@ -77,20 +74,6 @@ public class ConnectionService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         return connectionRepository.findConnectionsByUserAndStatus(user, status != null ? status : Status.ACCEPTED);
-    }
-
-    public List<User> getConnectionSuggestions(User user) {
-        List<User> allUsers = userRepository.findAllByIdNot(user.getId());
-        List<Connection> userConnections = connectionRepository.findAllByAuthorOrRecipient(user, user);
-
-        Set<Long> connectedUserIds = userConnections.stream()
-                .flatMap(connection -> Stream.of(connection.getAuthor().getId(), connection.getRecipient().getId()))
-                .collect(Collectors.toSet());
-
-        return allUsers.stream()
-                .filter(u -> !connectedUserIds.contains(u.getId()))
-                .collect(Collectors.toList());
-
     }
 
     public Connection markConnectionAsSeen(User user, Long id) {
