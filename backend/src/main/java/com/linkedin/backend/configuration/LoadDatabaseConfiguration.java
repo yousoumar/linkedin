@@ -18,9 +18,9 @@ import java.util.*;
 public class LoadDatabaseConfiguration {
     private static final int NUM_USERS = 100;
     private static final int MIN_POSTS_PER_USER = 1;
-    private static final int MAX_POSTS_PER_USER = 5;
-    private static final int MIN_CONNECTIONS_PER_USER = 2;
-    private static final int MAX_CONNECTIONS_PER_USER = 5;
+    private static final int MAX_POSTS_PER_USER = 3;
+    private static final int MIN_CONNECTIONS_PER_USER = 1;
+    private static final int MAX_CONNECTIONS_PER_USER = 3;
     private final Encoder encoder;
     private final Random random = new Random();
 
