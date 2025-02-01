@@ -16,11 +16,11 @@ import java.util.*;
 
 @Configuration
 public class LoadDatabaseConfiguration {
-    private static final int NUM_USERS = 100;
+    private static final int NUM_USERS = 500;
     private static final int MIN_POSTS_PER_USER = 1;
     private static final int MAX_POSTS_PER_USER = 3;
-    private static final int MIN_CONNECTIONS_PER_USER = 1;
-    private static final int MAX_CONNECTIONS_PER_USER = 3;
+    private static final int MIN_CONNECTIONS_PER_USER = -1;
+    private static final int MAX_CONNECTIONS_PER_USER = 0;
     private final Encoder encoder;
     private final Random random = new Random();
 
@@ -69,7 +69,7 @@ public class LoadDatabaseConfiguration {
                 "San Francisco, US", "New York, US", "Seattle, US", "Boston, US", "Austin, US",
                 "London, UK", "Berlin, DE", "Paris, FR", "Amsterdam, NL", "Stockholm, SE",
                 "Tokyo, JP", "Singapore, SG", "Sydney, AU", "Toronto, CA", "Vancouver, CA",
-                "Dubai, AE", "Tel Aviv, IL", "Bangalore, IN", "Seoul, KR", "Cape Town, ZA",
+                "Dubai, AE", "Dakar, SN", "Bangalore, IN", "Seoul, KR", "Cape Town, ZA",
                 "Mumbai, IN", "Shanghai, CN", "São Paulo, BR", "Mexico City, MX", "Dublin, IE");
 
         List<String> profilePictures = Arrays.asList(

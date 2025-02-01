@@ -3,7 +3,6 @@ package com.linkedin.backend.features.networking.controller;
 import com.linkedin.backend.features.authentication.model.User;
 import com.linkedin.backend.features.networking.model.Connection;
 import com.linkedin.backend.features.networking.model.Status;
-import com.linkedin.backend.features.networking.service.ConnectionRecommendationService;
 import com.linkedin.backend.features.networking.service.ConnectionService;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,11 +12,9 @@ import java.util.List;
 @RequestMapping("/api/v1/networking")
 public class ConnectionController {
     private final ConnectionService connectionService;
-    private final ConnectionRecommendationService connectionRecommendationService;
 
-    public ConnectionController(ConnectionService connectionService, ConnectionRecommendationService connectionRecommendationService) {
+    public ConnectionController(ConnectionService connectionService) {
         this.connectionService = connectionService;
-        this.connectionRecommendationService = connectionRecommendationService;
     }
 
     @GetMapping("/connections")
@@ -50,6 +47,6 @@ public class ConnectionController {
 
     @GetMapping("/suggestions")
     public List<User> getConnectionSuggestions(@RequestAttribute("authenticatedUser") User user, @RequestParam(required = false, defaultValue = "6") Integer limit) {
-        return connectionRecommendationService.getRecommendations(user.getId(), limit);
+        return connectionService.getRecommendations(user.getId(), limit);
     }
 }
