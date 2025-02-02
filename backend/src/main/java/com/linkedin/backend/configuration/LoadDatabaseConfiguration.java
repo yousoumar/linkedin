@@ -84,10 +84,10 @@ public class LoadDatabaseConfiguration {
         );
 
         List<User> users = new ArrayList<>();
-        for (int i = 0; i < NUM_USERS - 3; i++) {
+        for (int i = 0; i < NUM_USERS; i++) {
             String firstName = firstNames.get(random.nextInt(firstNames.size()));
             String lastName = lastNames.get(random.nextInt(lastNames.size()));
-            String email = firstName.toLowerCase() + "." + lastName.toLowerCase() + random.nextInt(1000) + "@example.com";
+            String email = firstName.toLowerCase() + "." + lastName.toLowerCase() + i + "@example.com";
             String position = positions.get(random.nextInt(positions.size()));
             String company = companies.get(random.nextInt(companies.size()));
             String location = locations.get(random.nextInt(locations.size()));
