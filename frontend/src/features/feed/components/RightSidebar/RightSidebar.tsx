@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "../../../../components/Button/Button";
+import { Loader } from "../../../../components/Loader/Loader";
 import { request } from "../../../../utils/api";
 import { IUser } from "../../../authentication/contexts/AuthenticationContextProvider";
 import { IConnection } from "../../../networking/components/Connection/Connection";
 import classes from "./RightSidebar.module.scss";
 export function RightSidebar() {
   const [suggestions, setSuggestions] = useState<IUser[]>([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -15,8 +17,12 @@ export function RightSidebar() {
       endpoint: "/api/v1/networking/suggestions?limit=2",
       onSuccess: (data) => {
         setSuggestions(data);
+        setLoading(false);
       },
-      onFailure: (error) => console.log(error),
+      onFailure: (error) => {
+        console.log(error);
+        setLoading(false);
+      },
     });
   }, []);
 
@@ -66,11 +72,12 @@ export function RightSidebar() {
             );
           })}
 
-        {suggestions.length === 0 && (
+        {suggestions.length === 0 && !loading && (
           <div className={classes.empty}>
             <p>No suggestions available at the moment.</p>
           </div>
         )}
+        {loading && <Loader isInline />}
       </div>
     </div>
   );
