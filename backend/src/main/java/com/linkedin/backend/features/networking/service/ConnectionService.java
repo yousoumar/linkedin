@@ -8,7 +8,10 @@ import com.linkedin.backend.features.networking.repository.ConnectionRepository;
 import com.linkedin.backend.features.notifications.service.NotificationService;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -100,7 +103,7 @@ public class ConnectionService {
 
         Set<User> secondDegreeConnections = getSecondDegreeConnections(user);
 
-        secondDegreeConnections = secondDegreeConnections.isEmpty() ? new HashSet<>(userRepository.findAll().stream().filter(u -> !Objects.equals(u.getId(), userId)).collect(Collectors.toList())) : secondDegreeConnections;
+        secondDegreeConnections = secondDegreeConnections.isEmpty() ? new HashSet<>(userRepository.findAllByIdNot(userId)) : secondDegreeConnections;
 
         List<UserRecommendation> recommendations = new ArrayList<>();
 
