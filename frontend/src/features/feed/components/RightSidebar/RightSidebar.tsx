@@ -15,15 +15,9 @@ export function RightSidebar() {
   useEffect(() => {
     request<IUser[]>({
       endpoint: "/api/v1/networking/suggestions?limit=2",
-      onSuccess: (data) => {
-        setSuggestions(data);
-        setLoading(false);
-      },
-      onFailure: (error) => {
-        console.log(error);
-        setLoading(false);
-      },
-    });
+      onSuccess: (data) => setSuggestions(data),
+      onFailure: (error) => console.log(error),
+    }).then(() => setLoading(false));
   }, []);
 
   return (
