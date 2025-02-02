@@ -232,11 +232,12 @@ export function Conversation() {
                         </div>
                       </button>
                     ))}
+                  {suggestingUsers.length === 0 && (
+                    <div style={{ padding: "1rem" }}>
+                      You need to have connections to start a conversation.
+                    </div>
+                  )}
                 </div>
-              )}
-
-              {suggestingUsers.length === 0 && (
-                <div>You need to have connections to start a conversation.</div>
               )}
             </form>
           )}
