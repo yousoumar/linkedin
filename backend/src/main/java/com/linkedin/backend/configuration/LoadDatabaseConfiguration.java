@@ -16,11 +16,11 @@ import java.util.*;
 
 @Configuration
 public class LoadDatabaseConfiguration {
-    private static final int NUM_USERS = 100;
+    private static final int NUM_USERS = 500;
     private static final int MIN_POSTS_PER_USER = 1;
-    private static final int MAX_POSTS_PER_USER = 10;
-    private static final int MIN_CONNECTIONS_PER_USER = 5;
-    private static final int MAX_CONNECTIONS_PER_USER = 20;
+    private static final int MAX_POSTS_PER_USER = 3;
+    private static final int MIN_CONNECTIONS_PER_USER = 0;
+    private static final int MAX_CONNECTIONS_PER_USER = 3;
     private final Encoder encoder;
     private final Random random = new Random();
 
@@ -60,7 +60,7 @@ public class LoadDatabaseConfiguration {
                 "Thales", "Capgemini", "Botify", "Bwat", "EDF", "Algolia", "Zoho", "Shopopop", "Société Générale", "BnpParibas", "Nexitis");
 
         List<String> positions = Arrays.asList("Software Engineer", "Data Scientist", "Product Manager",
-                "DevOps Engineer", "UI/UX Designer", "Full Stack Developer", "Frontend Developer", "Backend Developer",
+                "DevOps Engineer", "HR Manager", "Full Stack Developer", "Frontend Developer", "Backend Developer",
                 "Machine Learning Engineer", "Cloud Architect", "System Administrator", "Database Administrator",
                 "Security Engineer", "QA Engineer", "Technical Lead", "Engineering Manager", "CTO", "VP of Engineering",
                 "Solutions Architect", "Technical Project Manager");
@@ -69,7 +69,7 @@ public class LoadDatabaseConfiguration {
                 "San Francisco, US", "New York, US", "Seattle, US", "Boston, US", "Austin, US",
                 "London, UK", "Berlin, DE", "Paris, FR", "Amsterdam, NL", "Stockholm, SE",
                 "Tokyo, JP", "Singapore, SG", "Sydney, AU", "Toronto, CA", "Vancouver, CA",
-                "Dubai, AE", "Tel Aviv, IL", "Bangalore, IN", "Seoul, KR", "Cape Town, ZA",
+                "Dubai, AE", "Dakar, SN", "Bangalore, IN", "Seoul, KR", "Cape Town, ZA",
                 "Mumbai, IN", "Shanghai, CN", "São Paulo, BR", "Mexico City, MX", "Dublin, IE");
 
         List<String> profilePictures = Arrays.asList(
@@ -84,10 +84,10 @@ public class LoadDatabaseConfiguration {
         );
 
         List<User> users = new ArrayList<>();
-        for (int i = 0; i < NUM_USERS - 3; i++) {
+        for (int i = 0; i < NUM_USERS; i++) {
             String firstName = firstNames.get(random.nextInt(firstNames.size()));
             String lastName = lastNames.get(random.nextInt(lastNames.size()));
-            String email = firstName.toLowerCase() + "." + lastName.toLowerCase() + random.nextInt(1000) + "@example.com";
+            String email = firstName.toLowerCase() + "." + lastName.toLowerCase() + i + "@example.com";
             String position = positions.get(random.nextInt(positions.size()));
             String company = companies.get(random.nextInt(companies.size()));
             String location = locations.get(random.nextInt(locations.size()));
@@ -97,13 +97,12 @@ public class LoadDatabaseConfiguration {
         }
 
         users.addAll(List.of(
-                createUser("john.doe@example.com", "john", "John", "Doe", "Software Engineer", "Docker Inc",
-                        "San Francisco, CA",
+                createUser("john.doe@example.com", "john", "John", "Doe", positions.get(random.nextInt(positions.size())), companies.get(random.nextInt(companies.size())), locations.get(random.nextInt(locations.size())),
                         "https://images.unsplash.com/photo-1633332755192-727a05c4013d"),
-                createUser("anne.claire@example.com", "anne", "Anne", "Claire", "HR Manager", "eToro", "Paris, Fr",
+                createUser("anne.claire@example.com", "anne", "Anne", "Claire", positions.get(random.nextInt(positions.size())), companies.get(random.nextInt(companies.size())), locations.get(random.nextInt(locations.size())),
                         "https://images.unsplash.com/photo-1494790108377-be9c29b29330"),
-                createUser("arnauld.manner@example.com", "arnauld", "Arnauld", "Manner", "Product Manager", "Arc",
-                        "Dakar, SN",
+                createUser("arnauld.manner@example.com", "arnauld", "Arnauld", "Manner", positions.get(random.nextInt(positions.size())), companies.get(random.nextInt(companies.size())),
+                        locations.get(random.nextInt(locations.size())),
                         "https://images.unsplash.com/photo-1640960543409-dbe56ccc30e2")
         ));
 

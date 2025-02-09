@@ -11,7 +11,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/networking")
 public class ConnectionController {
-
     private final ConnectionService connectionService;
 
     public ConnectionController(ConnectionService connectionService) {
@@ -47,8 +46,7 @@ public class ConnectionController {
     }
 
     @GetMapping("/suggestions")
-    public List<User> getConnectionSuggestions(@RequestAttribute("authenticatedUser") User user) {
-        return connectionService.getConnectionSuggestions(user);
+    public List<User> getConnectionSuggestions(@RequestAttribute("authenticatedUser") User user, @RequestParam(required = false, defaultValue = "6") Integer limit) {
+        return connectionService.getRecommendations(user.getId(), limit);
     }
-
 }

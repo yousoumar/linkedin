@@ -41,13 +41,10 @@ export function useOauth(page: "login" | "signup") {
       }
 
       try {
-        await ouathLogin(code, page);
-
-        // setTimeout to see the loading spinner
-        setTimeout(() => {
+        setTimeout(async () => {
+          await ouathLogin(code, page);
           setIsOauthInProgress(false);
           setSearchParams({});
-          console.log("destination", destination);
           navigate(destination || "/");
         }, 1000);
       } catch (error) {

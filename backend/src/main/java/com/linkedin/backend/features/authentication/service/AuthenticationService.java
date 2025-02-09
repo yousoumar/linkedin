@@ -23,7 +23,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -262,9 +261,6 @@ public class AuthenticationService {
         return userRepository.save(user);
     }
 
-    public List<User> getUsersWithoutAuthenticated(User user) {
-        return userRepository.findAllByIdNot(user.getId());
-    }
 
     public User getUserById(Long receiverId) {
         return userRepository.findById(receiverId)

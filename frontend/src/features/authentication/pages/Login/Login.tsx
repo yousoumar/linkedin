@@ -41,7 +41,7 @@ export function Login() {
   };
 
   if (isOauthInProgress) {
-    return <Loader />;
+    return <Loader isInline />;
   }
 
   return (

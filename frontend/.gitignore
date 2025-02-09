@@ -1,0 +1,6 @@
+# Generated folders
+node_modules
+dist
+
+# Local env files
+.env

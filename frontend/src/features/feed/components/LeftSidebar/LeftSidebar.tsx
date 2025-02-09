@@ -60,12 +60,12 @@ export function LeftSidebar({ user }: ILeftSidebarProps) {
           <div className={classes.label}>Profile viewers</div>
           <div className={classes.value}>0</div>
         </div> */}
-        <div className={classes.item}>
-          <div className={classes.label}>Connexions</div>
-          <div className={classes.value}>
+        <button className={classes.item} onClick={() => navigate("/network/connections")}>
+          <span className={classes.label}>Connexions</span>
+          <span className={classes.value}>
             {connections.filter((connection) => connection.status === "ACCEPTED").length}
-          </div>
-        </div>
+          </span>
+        </button>
       </div>
     </div>
   );

@@ -1,0 +1,6 @@
+# Gradle files
+.gradle
+build
+
+# Lucene index files
+lucene

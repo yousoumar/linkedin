@@ -19,6 +19,10 @@
     gap: 1rem;
     font-size: 0.8rem;
 
+    button {
+      flex-shrink: 0;
+    }
+
     .avatar {
       width: 3rem;
       height: 3rem;
