@@ -195,11 +195,12 @@ export function Post({ post, setPosts }: PostProps) {
     });
   };
 
-  const editPost = async (content: string, picture: string) => {
+  const editPost = async (data: FormData) => {
     await request<IPost>({
       endpoint: `/api/v1/feed/posts/${post.id}`,
       method: "PUT",
-      body: JSON.stringify({ content, picture }),
+      body: data,
+      contentType: "multipart/form-data",
       onSuccess: (data) => {
         setPosts((prev) =>
           prev.map((p) => {
@@ -239,7 +240,11 @@ export function Post({ post, setPosts }: PostProps) {
             >
               <img
                 className={classes.avatar}
-                src={post.author.profilePicture || "/avatar.svg"}
+                src={
+                  post.author.profilePicture
+                    ? `${import.meta.env.VITE_API_URL}/api/v1/storage/${post.author.profilePicture}`
+                    : "/avatar.svg"
+                }
                 alt=""
               />
             </button>
@@ -277,7 +282,13 @@ export function Post({ post, setPosts }: PostProps) {
           </div>
         </div>
         <div className={classes.content}>{post.content}</div>
-        {post.picture && <img src={post.picture} alt="" className={classes.picture} />}
+        {post.picture && (
+          <img
+            src={`${import.meta.env.VITE_API_URL}/api/v1/storage/${post.picture}`}
+            alt=""
+            className={classes.picture}
+          />
+        )}
         <div className={classes.stats}>
           {likes.length > 0 ? (
             <div className={classes.stat}>

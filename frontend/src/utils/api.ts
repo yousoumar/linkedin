@@ -3,25 +3,36 @@ const BASE_URL = import.meta.env.VITE_API_URL;
 interface IRequestParams<T> {
   endpoint: string;
   method?: "GET" | "POST" | "PUT" | "DELETE";
-  body?: BodyInit;
+  contentType?: "application/json" | "multipart/form-data";
+  body?: BodyInit | FormData;
   onSuccess: (data: T) => void;
   onFailure: (error: string) => void;
+}
+
+interface IHeaders extends Record<string, string> {
+  Authorization: string;
 }
 
 export const request = async <T>({
   endpoint,
   method = "GET",
   body,
+  contentType = "application/json",
   onSuccess,
   onFailure,
 }: IRequestParams<T>): Promise<void> => {
+  const headers: IHeaders = {
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+  };
+
+  if (contentType === "application/json") {
+    headers["Content-Type"] = "application/json";
+  }
+
   try {
     const response = await fetch(`${BASE_URL}${endpoint}`, {
       method,
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-        "Content-Type": "application/json",
-      },
+      headers,
       body,
     });
 
