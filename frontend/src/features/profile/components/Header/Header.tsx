@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Button } from "../../../../components/Button/Button";
 import { Input } from "../../../../components/Input/Input";
 import { request } from "../../../../utils/api";
 import { IUser } from "../../../authentication/contexts/AuthenticationContextProvider";
 import { IConnection } from "../../../networking/components/Connection/Connection";
+import { ProfileAndCoverPictureUpdateModal } from "../ProfileAndCoverPictureUpdateModal/ProfileAndCoverPictureUpdateModal";
 import classes from "./Header.module.scss";
 interface ITopProps {
   user: IUser | null;
@@ -12,18 +13,34 @@ interface ITopProps {
 }
 export function Header({ user, authUser, onUpdate }: ITopProps) {
   const [editingInfo, setEditingInfo] = useState(false);
+  const [editingProfilePicture, setEditingProfilePicture] = useState(false);
+  const [editingCoverPicture, setEditingCoverPicture] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [info, setInfo] = useState({
-    firstName: user?.firstName,
-    lastName: user?.lastName,
-    position: user?.position,
-    company: user?.company,
-    location: user?.location,
+    firstName: authUser?.firstName,
+    lastName: authUser?.lastName,
+    position: authUser?.position,
+    company: authUser?.company,
+    location: authUser?.location,
   });
   const [connexions, setConnections] = useState<IConnection[]>([]);
   const [invitations, setInvitations] = useState<IConnection[]>([]);
   const connection =
     connexions.find((c) => c.recipient.id === user?.id || c.author.id === user?.id) ||
     invitations.find((c) => c.recipient.id === user?.id || c.author.id === user?.id);
+
+  const [newProfilePicture, setNewProfilePicture] = useState<File | undefined | null>();
+  const [newProfilePicturePreview, setNewProfilePicturePreview] = useState<string | null>(
+    user?.profilePicture
+      ? `${import.meta.env.VITE_API_URL}/api/v1/storage/${user?.profilePicture}`
+      : "/avatar.svg"
+  );
+  const [newCoverPicture, setNewCoverPicture] = useState<File | undefined | null>();
+  const [newCoverPicturePreview, setNewCoverPicturePreview] = useState<string | null>(
+    user?.coverPicture
+      ? `${import.meta.env.VITE_API_URL}/api/v1/storage/${user?.coverPicture}`
+      : "/cover.jpeg"
+  );
 
   useEffect(() => {
     request<IConnection[]>({
@@ -43,7 +60,8 @@ export function Header({ user, authUser, onUpdate }: ITopProps) {
 
   async function updateInfo() {
     await request<IUser>({
-      endpoint: `/api/v1/authentication/profile/${user?.id}?firstName=${info.firstName}&lastName=${info.lastName}&position=${info.position}&company=${info.company}&location=${info.location}`,
+      endpoint: `/api/v1/authentication/profile/${user?.id}/info?firstName=${info.firstName}&lastName=${info.lastName}&position=${info.position}&company=${info.company}&location=${info.location}`,
+      contentType: "multipart/form-data",
       method: "PUT",
       onSuccess: (data) => {
         onUpdate(data);
@@ -51,24 +69,146 @@ export function Header({ user, authUser, onUpdate }: ITopProps) {
       },
       onFailure: (error) => console.log(error),
     });
-    setInfo({
-      firstName: "",
-      lastName: "",
-      position: "",
-      company: "",
-      location: "",
-    });
     setEditingInfo(false);
   }
 
+  async function updateProfilePicture() {
+    const formData = new FormData();
+    formData.append(
+      "profilePicture",
+      newProfilePicture === null
+        ? ""
+        : newProfilePicture
+        ? newProfilePicture
+        : user?.profilePicture || ""
+    );
+
+    await request<IUser>({
+      endpoint: `/api/v1/authentication/profile/${user?.id}/profile-picture`,
+      method: "PUT",
+      contentType: "multipart/form-data",
+      body: formData,
+      onSuccess: (data) => {
+        onUpdate(data);
+        setEditingProfilePicture(false);
+      },
+      onFailure: (error) => console.log(error),
+    });
+  }
+
+  async function updateCoverPicture() {
+    const formData = new FormData();
+    formData.append(
+      "coverPicture",
+      newCoverPicture === null ? "" : newCoverPicture ? newCoverPicture : user?.coverPicture || ""
+    );
+
+    await request<IUser>({
+      endpoint: `/api/v1/authentication/profile/${user?.id}/cover-picture`,
+      method: "PUT",
+      contentType: "multipart/form-data",
+      body: formData,
+      onSuccess: (data) => {
+        onUpdate(data);
+        setEditingCoverPicture(false);
+      },
+      onFailure: (error) => console.log(error),
+    });
+  }
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>, type: "profile" | "cover") => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (type === "profile") {
+        setNewProfilePicture(file);
+      } else {
+        setNewCoverPicture(file);
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (type === "profile") {
+          setNewProfilePicturePreview(reader.result as string);
+        } else {
+          setNewCoverPicturePreview(reader.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
-    <div className={classes.top}>
-      <img className={classes.cover} src={user?.coverPicture || "/cover.jpeg"} alt="" />
-
-      <div className={classes.avatar}>
-        <img src={user?.profilePicture || "/avatar.svg"} alt="" />
+    <div className={classes.header}>
+      <div className={classes["cover-wrapper"]}>
+        {user?.id === authUser?.id ? (
+          <button className={classes.edit} onClick={() => setEditingCoverPicture(true)}>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+              <path d="M362.7 19.3L314.3 67.7 444.3 197.7l48.4-48.4c25-25 25-65.5 0-90.5L453.3 19.3c-25-25-65.5-25-90.5 0zm-71 71L58.6 323.5c-10.4 10.4-18 23.3-22.2 37.4L1 481.2C-1.5 489.7 .8 498.8 7 505s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L421.7 220.3 291.7 90.3z" />
+            </svg>
+          </button>
+        ) : null}
+        <img
+          className={classes.cover}
+          src={
+            user?.coverPicture
+              ? `${import.meta.env.VITE_API_URL}/api/v1/storage/${user?.coverPicture}`
+              : "/cover.jpeg"
+          }
+          alt=""
+        />
       </div>
-
+      {editingCoverPicture ? (
+        <ProfileAndCoverPictureUpdateModal
+          newPicturePreview={newCoverPicturePreview}
+          setNewPicturePreview={setNewCoverPicturePreview}
+          setNewPicture={setNewCoverPicture}
+          fileInputRef={fileInputRef}
+          handleFileChange={(e) => handleFileChange(e, "cover")}
+          triggerFileInput={triggerFileInput}
+          updatePicture={updateCoverPicture}
+          setEditingPicture={setEditingCoverPicture}
+          type="cover"
+        />
+      ) : null}
+      {editingProfilePicture ? (
+        <ProfileAndCoverPictureUpdateModal
+          newPicturePreview={newProfilePicturePreview}
+          setNewPicturePreview={setNewProfilePicturePreview}
+          setNewPicture={setNewProfilePicture}
+          fileInputRef={fileInputRef}
+          handleFileChange={(e) => handleFileChange(e, "profile")}
+          triggerFileInput={triggerFileInput}
+          updatePicture={updateProfilePicture}
+          setEditingPicture={setEditingProfilePicture}
+          type="profile"
+        />
+      ) : null}
+      {user?.id === authUser?.id ? (
+        <button className={classes.avatar} onClick={() => setEditingProfilePicture(true)}>
+          <img
+            src={
+              user?.profilePicture
+                ? `${import.meta.env.VITE_API_URL}/api/v1/storage/${user?.profilePicture}`
+                : "/avatar.svg"
+            }
+            alt=""
+          />
+        </button>
+      ) : (
+        <div className={classes.avatar}>
+          <img
+            src={
+              user?.profilePicture
+                ? `${import.meta.env.VITE_API_URL}/api/v1/storage/${user?.profilePicture}`
+                : "/avatar.svg"
+            }
+            alt=""
+          />
+        </div>
+      )}
       <div className={classes.wrapper}>
         <div className={classes.info}>
           {!editingInfo ? (

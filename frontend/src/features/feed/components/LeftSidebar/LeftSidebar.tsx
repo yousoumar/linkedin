@@ -48,10 +48,24 @@ export function LeftSidebar({ user }: ILeftSidebarProps) {
   return (
     <div className={classes.root}>
       <div className={classes.cover}>
-        <img src={user?.coverPicture || "/cover.jpeg"} alt="Cover" />
+        <img
+          src={
+            user?.coverPicture
+              ? `${import.meta.env.VITE_API_URL}/api/v1/storage/${user?.coverPicture}`
+              : "/cover.jpeg"
+          }
+          alt="Cover"
+        />
       </div>
       <button className={classes.avatar} onClick={() => navigate("/profile/" + user?.id)}>
-        <img src={user?.profilePicture || "/avatar.svg"} alt="" />
+        <img
+          src={
+            user?.profilePicture
+              ? `${import.meta.env.VITE_API_URL}/api/v1/storage/${user?.profilePicture}`
+              : "/avatar.svg"
+          }
+          alt=""
+        />
       </button>
       <div className={classes.name}>{user?.firstName + " " + user?.lastName}</div>
       <div className={classes.title}>{user?.position + " at " + user?.company}</div>

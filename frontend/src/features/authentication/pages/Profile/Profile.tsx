@@ -32,7 +32,7 @@ export function Profile() {
       return;
     }
     await request<IUser>({
-      endpoint: `/api/v1/authentication/profile/${user?.id}?firstName=${data.firstName}&lastName=${data.lastName}&company=${data.company}&position=${data.position}&location=${data.location}`,
+      endpoint: `/api/v1/authentication/profile/${user?.id}/info?firstName=${data.firstName}&lastName=${data.lastName}&company=${data.company}&position=${data.position}&location=${data.location}`,
       method: "PUT",
       body: JSON.stringify(data),
       onSuccess: (data) => {

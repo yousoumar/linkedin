@@ -41,7 +41,15 @@ export function Profile({
           }
         }}
       >
-        <img className={classes.avatar} src={user?.profilePicture || "/avatar.svg"} alt="" />
+        <img
+          className={classes.avatar}
+          src={
+            user?.profilePicture
+              ? `${import.meta.env.VITE_API_URL}/api/v1/storage/${user?.profilePicture}`
+              : "/avatar.svg"
+          }
+          alt=""
+        />
         <div className={classes.name}>
           <div>{user?.firstName + " " + user?.lastName?.charAt(0) + "."}</div>
         </div>
@@ -52,7 +60,11 @@ export function Profile({
           <div className={classes.content}>
             <img
               className={`${classes.left} ${classes.avatar}`}
-              src={user?.profilePicture || "/avatar.svg"}
+              src={
+                user?.profilePicture
+                  ? `${import.meta.env.VITE_API_URL}/api/v1/storage/${user?.profilePicture}`
+                  : "/avatar.svg"
+              }
               alt=""
             />
             <div className={classes.right}>

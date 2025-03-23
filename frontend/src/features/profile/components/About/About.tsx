@@ -12,13 +12,13 @@ interface AboutProps {
 
 export function About({ user, authUser, onUpdate }: AboutProps) {
   const [editingAbout, setEditingAbout] = useState(false);
-  const [aboutInput, setAboutInput] = useState(user?.about || "");
+  const [aboutInput, setAboutInput] = useState(authUser?.about || "");
 
   async function updateAbout() {
     if (!user?.id) return;
 
     await request<IUser>({
-      endpoint: `/api/v1/authentication/profile/${user.id}?about=${aboutInput}`,
+      endpoint: `/api/v1/authentication/profile/${user.id}/info?about=${aboutInput}`,
       method: "PUT",
       onSuccess: (data) => {
         onUpdate(data);
@@ -26,7 +26,6 @@ export function About({ user, authUser, onUpdate }: AboutProps) {
       },
       onFailure: (error) => console.log(error),
     });
-    setAboutInput("");
   }
 
   return (
