@@ -1,5 +1,16 @@
 package com.linkedin.backend.configuration;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
 import com.linkedin.backend.features.authentication.model.User;
 import com.linkedin.backend.features.authentication.repository.UserRepository;
 import com.linkedin.backend.features.authentication.utils.Encoder;
@@ -8,11 +19,6 @@ import com.linkedin.backend.features.feed.repository.PostRepository;
 import com.linkedin.backend.features.networking.model.Connection;
 import com.linkedin.backend.features.networking.model.Status;
 import com.linkedin.backend.features.networking.repository.ConnectionRepository;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-import java.util.*;
 
 @Configuration
 public class LoadDatabaseConfiguration {
@@ -29,7 +35,8 @@ public class LoadDatabaseConfiguration {
     }
 
     @Bean
-    public CommandLineRunner initDatabase(UserRepository userRepository, PostRepository postRepository, ConnectionRepository connectionRepository) {
+    public CommandLineRunner initDatabase(UserRepository userRepository, PostRepository postRepository,
+            ConnectionRepository connectionRepository) {
         return args -> {
             List<User> users = createUsers(userRepository);
             createConnections(connectionRepository, users);
@@ -39,8 +46,10 @@ public class LoadDatabaseConfiguration {
 
     private List<User> createUsers(UserRepository userRepository) {
         List<String> firstNames = Arrays.asList("John", "Jane", "Michael", "Emily", "David", "Sarah", "James", "Emma",
-                "William", "Olivia", "Liam", "Ava", "Noah", "Isabella", "Ethan", "Sophia", "Mason", "Mia", "Lucas", "Charlotte",
-                "Alexander", "Amelia", "Daniel", "Harper", "Joseph", "Evelyn", "Samuel", "Abigail", "Henry", "Elizabeth",
+                "William", "Olivia", "Liam", "Ava", "Noah", "Isabella", "Ethan", "Sophia", "Mason", "Mia", "Lucas",
+                "Charlotte",
+                "Alexander", "Amelia", "Daniel", "Harper", "Joseph", "Evelyn", "Samuel", "Abigail", "Henry",
+                "Elizabeth",
                 "Sebastian", "Sofia", "Jack", "Avery", "Owen", "Ella", "Gabriel", "Madison", "Matthew", "Scarlett",
                 "Moussa", "Fatou", "Amadou", "Aisha", "Omar", "Aminata", "Ibrahim", "Mariam", "Abdul", "Zainab",
                 "Wei", "Xia", "Ming", "Lin", "Hui", "Yan", "Jie", "Ying", "Feng", "Hong",
@@ -57,7 +66,8 @@ public class LoadDatabaseConfiguration {
         List<String> companies = Arrays.asList("Google", "Microsoft", "Apple", "Amazon", "Meta", "Netflix", "Tesla",
                 "Adobe", "Twitter", "LinkedIn", "Spotify", "Uber", "Airbnb", "Salesforce", "Oracle", "IBM", "Intel",
                 "Samsung", "Sony", "Docker", "Zoom", "Slack", "GitHub", "GitLab", "Redis", "MongoDB", "Orange",
-                "Thales", "Capgemini", "Botify", "Bwat", "EDF", "Algolia", "Zoho", "Shopopop", "Société Générale", "BnpParibas", "Nexitis");
+                "Thales", "Capgemini", "Botify", "Bwat", "EDF", "Algolia", "Zoho", "Shopopop", "Société Générale",
+                "BnpParibas", "Nexitis");
 
         List<String> positions = Arrays.asList("Software Engineer", "Data Scientist", "Product Manager",
                 "DevOps Engineer", "HR Manager", "Full Stack Developer", "Frontend Developer", "Backend Developer",
@@ -72,17 +82,6 @@ public class LoadDatabaseConfiguration {
                 "Dubai, AE", "Dakar, SN", "Bangalore, IN", "Seoul, KR", "Cape Town, ZA",
                 "Mumbai, IN", "Shanghai, CN", "São Paulo, BR", "Mexico City, MX", "Dublin, IE");
 
-        List<String> profilePictures = Arrays.asList(
-                "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
-                "https://images.unsplash.com/photo-1586297135537-94bc9ba060aa",
-                "https://images.unsplash.com/photo-1640951613773-54706e06851d",
-                "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde",
-                "https://images.unsplash.com/photo-1527980965255-d3b416303d12",
-                "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
-                "https://images.unsplash.com/photo-1630208232589-e42b29428b19",
-                "https://images.unsplash.com/photo-1619895862022-09114b41f16f"
-        );
-
         List<User> users = new ArrayList<>();
         for (int i = 0; i < NUM_USERS; i++) {
             String firstName = firstNames.get(random.nextInt(firstNames.size()));
@@ -91,27 +90,34 @@ public class LoadDatabaseConfiguration {
             String position = positions.get(random.nextInt(positions.size()));
             String company = companies.get(random.nextInt(companies.size()));
             String location = locations.get(random.nextInt(locations.size()));
-            String profilePicture = i < profilePictures.size() ? profilePictures.get(i) : null;
 
-            users.add(createUser(email, lastName, firstName, lastName, position, company, location, profilePicture));
+            users.add(createUser(email, lastName, firstName, lastName, position, company, location, null));
         }
 
         users.addAll(List.of(
-                createUser("john.doe@example.com", "john", "John", "Doe", positions.get(random.nextInt(positions.size())), companies.get(random.nextInt(companies.size())), locations.get(random.nextInt(locations.size())),
-                        "https://images.unsplash.com/photo-1633332755192-727a05c4013d"),
-                createUser("anne.claire@example.com", "anne", "Anne", "Claire", positions.get(random.nextInt(positions.size())), companies.get(random.nextInt(companies.size())), locations.get(random.nextInt(locations.size())),
-                        "https://images.unsplash.com/photo-1494790108377-be9c29b29330"),
-                createUser("arnauld.manner@example.com", "arnauld", "Arnauld", "Manner", positions.get(random.nextInt(positions.size())), companies.get(random.nextInt(companies.size())),
+                createUser("john.doe@example.com", "john", "John", "Doe",
+                        positions.get(random.nextInt(positions.size())),
+                        companies.get(random.nextInt(companies.size())),
                         locations.get(random.nextInt(locations.size())),
-                        "https://images.unsplash.com/photo-1640960543409-dbe56ccc30e2")
-        ));
+                        null),
+                createUser("anne.claire@example.com", "anne", "Anne", "Claire",
+                        positions.get(random.nextInt(positions.size())),
+                        companies.get(random.nextInt(companies.size())),
+                        locations.get(random.nextInt(locations.size())),
+                        null),
+                createUser("arnauld.manner@example.com", "arnauld", "Arnauld", "Manner",
+                        positions.get(random.nextInt(positions.size())),
+                        companies.get(random.nextInt(companies.size())),
+                        locations.get(random.nextInt(locations.size())),
+                        null)));
 
         return userRepository.saveAll(users);
     }
 
     private void createConnections(ConnectionRepository connectionRepository, List<User> users) {
         for (User user : users) {
-            int numConnections = random.nextInt(MAX_CONNECTIONS_PER_USER - MIN_CONNECTIONS_PER_USER + 1) + MIN_CONNECTIONS_PER_USER;
+            int numConnections = random.nextInt(MAX_CONNECTIONS_PER_USER - MIN_CONNECTIONS_PER_USER + 1)
+                    + MIN_CONNECTIONS_PER_USER;
             Set<User> userConnections = new HashSet<>();
 
             while (userConnections.size() < numConnections) {
@@ -142,19 +148,11 @@ public class LoadDatabaseConfiguration {
                 "Exciting times ahead for %s technology!",
                 "Just published an article about %s best practices.",
                 "Grateful for the amazing %s team at %s.",
-                "Innovation in %s is moving faster than ever!"
-        );
+                "Innovation in %s is moving faster than ever!");
 
         List<String> topics = Arrays.asList("AI", "Machine Learning", "Cloud Computing", "DevOps", "Blockchain",
                 "Cybersecurity", "Data Science", "IoT", "5G", "Quantum Computing", "AR/VR", "Digital Transformation",
                 "Agile Development", "Remote Work", "Tech Leadership");
-
-        List<String> postImages = Arrays.asList(
-                "https://images.unsplash.com/photo-1731176497854-f9ea4dd52eb6",
-                "https://images.unsplash.com/photo-1504384764586-bb4cdc1707b0",
-                "https://images.unsplash.com/photo-1553877522-43269d4ea984",
-                "https://images.unsplash.com/photo-1531297484001-80022131f5a1"
-        );
 
         for (User user : users) {
             int numPosts = random.nextInt(MAX_POSTS_PER_USER - MIN_POSTS_PER_USER + 1) + MIN_POSTS_PER_USER;
@@ -166,11 +164,6 @@ public class LoadDatabaseConfiguration {
 
                 Post post = new Post(content, user);
                 post.setLikes(generateLikes(users, random));
-
-                // Add an image to ~20% of posts
-                if (random.nextInt(5) == 0) {
-                    post.setPicture(postImages.get(random.nextInt(postImages.size())));
-                }
 
                 postRepository.save(post);
             }
@@ -190,7 +183,7 @@ public class LoadDatabaseConfiguration {
     }
 
     private User createUser(String email, String password, String firstName, String lastName,
-                            String position, String company, String location, String profilePicture) {
+            String position, String company, String location, String profilePicture) {
         User user = new User(email, encoder.encode(password));
         user.setEmailVerified(true);
         user.setFirstName(firstName);

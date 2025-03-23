@@ -1,5 +1,27 @@
 package com.linkedin.backend.features.authentication.service;
 
+import java.io.IOException;
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.linkedin.backend.features.authentication.dto.AuthenticationRequestBody;
 import com.linkedin.backend.features.authentication.dto.AuthenticationResponseBody;
 import com.linkedin.backend.features.authentication.model.User;
@@ -7,24 +29,12 @@ import com.linkedin.backend.features.authentication.repository.UserRepository;
 import com.linkedin.backend.features.authentication.utils.EmailService;
 import com.linkedin.backend.features.authentication.utils.Encoder;
 import com.linkedin.backend.features.authentication.utils.JsonWebToken;
+import com.linkedin.backend.features.storage.service.StorageService;
+
 import io.jsonwebtoken.Claims;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
-import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
-
-import java.security.SecureRandom;
-import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class AuthenticationService {
@@ -36,6 +46,8 @@ public class AuthenticationService {
     private final JsonWebToken jsonWebToken;
     private final EmailService emailService;
     private final RestTemplate restTemplate;
+    private final StorageService storageService;
+
     @PersistenceContext
     private EntityManager entityManager;
     @Value("${oauth.google.client.id}")
@@ -43,12 +55,14 @@ public class AuthenticationService {
     @Value("${oauth.google.client.secret}")
     private String googleClientSecret;
 
-    public AuthenticationService(UserRepository userRepository, Encoder encoder, JsonWebToken jsonWebToken, EmailService emailService, RestTemplate restTemplate) {
+    public AuthenticationService(UserRepository userRepository, Encoder encoder, JsonWebToken jsonWebToken,
+            EmailService emailService, RestTemplate restTemplate) {
         this.userRepository = userRepository;
         this.encoder = encoder;
         this.jsonWebToken = jsonWebToken;
         this.emailService = emailService;
         this.restTemplate = restTemplate;
+        this.storageService = new StorageService();
     }
 
     public static String generateEmailVerificationToken() {
@@ -70,8 +84,8 @@ public class AuthenticationService {
             userRepository.save(user.get());
             String subject = "Email Verification";
             String body = String.format("Only one step to take full advantage of LinkedIn.\n\n"
-                            + "Enter this code to verify your email: " + "%s\n\n" + "The code will expire in " + "%s"
-                            + " minutes.",
+                    + "Enter this code to verify your email: " + "%s\n\n" + "The code will expire in " + "%s"
+                    + " minutes.",
                     emailVerificationToken, durationInMinutes);
             try {
                 emailService.sendEmail(email, subject, body);
@@ -167,9 +181,9 @@ public class AuthenticationService {
 
         String subject = "Email Verification";
         String body = String.format("""
-                        Only one step to take full advantage of LinkedIn.
-                        
-                        Enter this code to verify your email: %s. The code will expire in %s minutes.""",
+                Only one step to take full advantage of LinkedIn.
+
+                Enter this code to verify your email: %s. The code will expire in %s minutes.""",
                 emailVerificationToken, durationInMinutes);
         try {
             emailService.sendEmail(registerRequestBody.email(), subject, body);
@@ -179,7 +193,6 @@ public class AuthenticationService {
         String authToken = jsonWebToken.generateToken(registerRequestBody.email());
         return new AuthenticationResponseBody(authToken, "User registered successfully.");
     }
-
 
     public User getUser(String email) {
         return userRepository.findByEmail(email)
@@ -207,9 +220,9 @@ public class AuthenticationService {
             userRepository.save(user.get());
             String subject = "Password Reset";
             String body = String.format("""
-                            You requested a password reset.
-                            
-                            Enter this code to reset your password: %s. The code will expire in %s minutes.""",
+                    You requested a password reset.
+
+                    Enter this code to reset your password: %s. The code will expire in %s minutes.""",
                     passwordResetToken, durationInMinutes);
             try {
                 emailService.sendEmail(email, subject, body);
@@ -237,10 +250,8 @@ public class AuthenticationService {
         }
     }
 
-    public User updateUserProfile(Long userId, String firstName, String lastName, String company,
-                                  String position, String location, String profilePicture, String coverPicture, String about) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public User updateUserProfile(User user, String firstName, String lastName, String company,
+            String position, String location, String about) {
         if (firstName != null)
             user.setFirstName(firstName);
         if (lastName != null)
@@ -251,21 +262,42 @@ public class AuthenticationService {
             user.setPosition(position);
         if (location != null)
             user.setLocation(location);
-        if (profilePicture != null)
-            user.setProfilePicture(profilePicture);
-        if (coverPicture != null)
-            user.setCoverPicture(coverPicture);
         if (about != null)
             user.setAbout(about);
 
         return userRepository.save(user);
     }
 
+    public User updateProfilePicture(User user, MultipartFile profilePicture) throws IOException {
+        if (profilePicture != null) {
+            String profilePictureUrl = storageService.saveImage(profilePicture);
+            user.setProfilePicture(profilePictureUrl);
+        } else {
+            if (user.getProfilePicture() != null)
+                storageService.deleteFile(user.getProfilePicture());
+
+            user.setProfilePicture(null);
+        }
+        return userRepository.save(user);
+    }
+
+    public User updateCoverPicture(User user, MultipartFile coverPicture) throws IOException {
+        if (coverPicture != null) {
+            String coverPictureUrl = storageService.saveImage(coverPicture);
+            user.setCoverPicture(coverPictureUrl);
+        } else {
+            if (user.getCoverPicture() != null)
+                storageService.deleteFile(user.getCoverPicture());
+
+            user.setCoverPicture(null);
+        }
+
+        return userRepository.save(user);
+    }
 
     public User getUserById(Long receiverId) {
         return userRepository.findById(receiverId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found."));
     }
-
 
 }

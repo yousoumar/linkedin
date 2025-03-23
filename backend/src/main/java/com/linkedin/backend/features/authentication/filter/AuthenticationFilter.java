@@ -44,11 +44,11 @@ public class AuthenticationFilter extends HttpFilter {
 
         String path = request.getRequestURI();
 
-        if (unsecuredEndpoints.contains(path) || path.startsWith("/api/v1/authentication/oauth")) {
+        if (unsecuredEndpoints.contains(path) || path.startsWith("/api/v1/authentication/oauth") || path.startsWith("/api/v1/storage")) {
             chain.doFilter(request, response);
             return;
         }
-        
+
         try {
             String authorization = request.getHeader("Authorization");
             if (authorization == null || !authorization.startsWith("Bearer ")) {

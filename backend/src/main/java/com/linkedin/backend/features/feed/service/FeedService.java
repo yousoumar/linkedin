@@ -1,8 +1,15 @@
 package com.linkedin.backend.features.feed.service;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.linkedin.backend.features.authentication.model.User;
 import com.linkedin.backend.features.authentication.repository.UserRepository;
-import com.linkedin.backend.features.feed.dto.PostDto;
 import com.linkedin.backend.features.feed.model.Comment;
 import com.linkedin.backend.features.feed.model.Post;
 import com.linkedin.backend.features.feed.repository.CommentRepository;
@@ -11,12 +18,7 @@ import com.linkedin.backend.features.networking.model.Connection;
 import com.linkedin.backend.features.networking.model.Status;
 import com.linkedin.backend.features.networking.repository.ConnectionRepository;
 import com.linkedin.backend.features.notifications.service.NotificationService;
-import org.springframework.stereotype.Service;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.linkedin.backend.features.storage.service.StorageService;
 
 @Service
 public class FeedService {
@@ -25,23 +27,32 @@ public class FeedService {
     private final CommentRepository commentRepository;
     private final NotificationService notificationService;
     private final ConnectionRepository connectionRepository;
+    private final StorageService storageService;
 
     public FeedService(PostRepository postRepository, UserRepository userRepository,
-                       CommentRepository commentRepository, NotificationService notificationService, ConnectionRepository connectionRepository) {
+            CommentRepository commentRepository, NotificationService notificationService,
+            ConnectionRepository connectionRepository, StorageService storageService) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
         this.notificationService = notificationService;
         this.connectionRepository = connectionRepository;
+        this.storageService = storageService;
     }
 
-    public Post createPost(PostDto postDto, Long authorId) {
-        User author = userRepository.findById(authorId)
+    public Post createPost(MultipartFile picture, String content, Long id) throws Exception {
+        User author = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        Post post = new Post(postDto.getContent(), author);
-        post.setPicture(postDto.getPicture());
+
+        String pictureUrl = storageService.saveImage(picture);
+
+        Post post = new Post(content, author);
+
+        post.setPicture(pictureUrl);
         post.setLikes(new HashSet<>());
+
         notificationService.sendNewPostNotificationToFeed(post);
+
         return postRepository.save(post);
     }
 
@@ -49,16 +60,23 @@ public class FeedService {
         return postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("Post not found"));
     }
 
-    public Post editPost(Long postId, Long userId, PostDto postDto) {
+    public Post editPost(Long postId, Long id, MultipartFile picture, String content) throws Exception {
         Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("Post not found"));
-        User user = userRepository.findById(userId)
+
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
         if (!post.getAuthor().equals(user)) {
             throw new IllegalArgumentException("User is not the author of the post");
         }
-        post.setContent(postDto.getContent());
-        post.setPicture(postDto.getPicture());
+
+        String pictureUrl = storageService.saveImage(picture);
+
+        post.setContent(content);
+        post.setPicture(pictureUrl);
+
         notificationService.sendEditNotificationToPost(postId, post);
+
         return postRepository.save(post);
     }
 
@@ -130,9 +148,7 @@ public class FeedService {
 
     public List<Post> getFeedPosts(Long authenticatedUserId) {
         List<Connection> connections = connectionRepository.findByAuthorIdAndStatusOrRecipientIdAndStatus(
-                authenticatedUserId, Status.ACCEPTED, authenticatedUserId, Status.ACCEPTED
-        );
-
+                authenticatedUserId, Status.ACCEPTED, authenticatedUserId, Status.ACCEPTED);
 
         Set<Long> connectedUserIds = connections.stream()
                 .map(connection -> connection.getAuthor().getId().equals(authenticatedUserId)
@@ -140,10 +156,8 @@ public class FeedService {
                         : connection.getAuthor().getId())
                 .collect(Collectors.toSet());
 
-
         return postRepository.findByAuthorIdInOrderByCreationDateDesc(connectedUserIds);
     }
-
 
     public List<Post> getAllPosts() {
         return postRepository.findAllByOrderByCreationDateDesc();
@@ -158,4 +172,5 @@ public class FeedService {
         Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("Post not found"));
         return post.getLikes();
     }
+
 }

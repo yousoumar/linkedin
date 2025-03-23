@@ -35,7 +35,7 @@ _Windows:_
 gradlew.bat build -t -x test
 ```
 
-Configure environment variables for OAuth 2.0 and OpenID connect:
+Configure environment variables for OAuth 2.0 and OpenID connect (give fake values if you do not want to test this feature):
 
 _Mac/Linux:_
 

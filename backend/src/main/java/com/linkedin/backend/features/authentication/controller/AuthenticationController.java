@@ -1,15 +1,29 @@
 package com.linkedin.backend.features.authentication.controller;
 
+import java.io.IOException;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.linkedin.backend.dto.Response;
 import com.linkedin.backend.features.authentication.dto.AuthenticationOauthRequestBody;
 import com.linkedin.backend.features.authentication.dto.AuthenticationRequestBody;
 import com.linkedin.backend.features.authentication.dto.AuthenticationResponseBody;
 import com.linkedin.backend.features.authentication.model.User;
 import com.linkedin.backend.features.authentication.service.AuthenticationService;
+
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/v1/authentication")
@@ -29,7 +43,6 @@ public class AuthenticationController {
     public AuthenticationResponseBody googleLogin(@RequestBody AuthenticationOauthRequestBody oauth2RequestBody) {
         return authenticationUserService.googleLoginOrSignup(oauth2RequestBody.code(), oauth2RequestBody.page());
     }
-
 
     @PostMapping("/register")
     public AuthenticationResponseBody registerPage(@Valid @RequestBody AuthenticationRequestBody registerRequestBody) {
@@ -62,12 +75,12 @@ public class AuthenticationController {
 
     @PutMapping("/reset-password")
     public Response resetPassword(@RequestParam String newPassword, @RequestParam String token,
-                                  @RequestParam String email) {
+            @RequestParam String email) {
         authenticationUserService.resetPassword(email, newPassword, token);
         return new Response("Password reset successfully.");
     }
 
-    @PutMapping("/profile/{id}")
+    @PutMapping("/profile/{id}/info")
     public User updateUserProfile(
             @RequestAttribute("authenticatedUser") User user,
             @PathVariable Long id,
@@ -76,8 +89,6 @@ public class AuthenticationController {
             @RequestParam(required = false) String company,
             @RequestParam(required = false) String position,
             @RequestParam(required = false) String location,
-            @RequestParam(required = false) String profilePicture,
-            @RequestParam(required = false) String coverPicture,
             @RequestParam(required = false) String about) {
 
         if (!user.getId().equals(id)) {
@@ -85,7 +96,37 @@ public class AuthenticationController {
                     "User does not have permission to update this profile.");
         }
 
-        return authenticationUserService.updateUserProfile(id, firstName, lastName, company, position, location, profilePicture, coverPicture, about);
+        return authenticationUserService.updateUserProfile(
+                user,
+                firstName, lastName, company, position, location, about);
+    }
+
+    @PutMapping("/profile/{id}/profile-picture")
+    public User updateProfilePicture(
+            @RequestAttribute("authenticatedUser") User user,
+            @PathVariable Long id,
+            @RequestParam(value = "profilePicture", required = false) MultipartFile profilePicture) throws IOException {
+
+        if (!user.getId().equals(id)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "User does not have permission to update this profile picture.");
+        }
+
+        return authenticationUserService.updateProfilePicture(user, profilePicture);
+    }
+
+    @PutMapping("/profile/{id}/cover-picture")
+    public User updateCoverPicture(
+            @RequestAttribute("authenticatedUser") User user,
+            @PathVariable Long id,
+            @RequestParam(required = false) MultipartFile coverPicture) throws IOException {
+
+        if (!user.getId().equals(id)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "User does not have permission to update this cover picture.");
+        }
+
+        return authenticationUserService.updateCoverPicture(user, coverPicture);
     }
 
     @GetMapping("/users/me")
