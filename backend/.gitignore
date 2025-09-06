@@ -7,3 +7,4 @@ lucene
 
 uploads/*
 !uploads/.gitkeep
+bin

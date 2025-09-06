@@ -35,7 +35,7 @@ _Windows:_
 gradlew.bat build -t -x test
 ```
 
-Configure environment variables for OAuth 2.0 and OIDC, aka the Continue with Google button. Give fake values if you do not want to test this feature:
+Configure environment variables for OAuth 2.0 and OIDC, aka the Continue with Google button. Skip if you do not want to test this feature:
 
 _Mac/Linux:_
 
@@ -87,7 +87,7 @@ _Windows:_
 copy .env.example .env
 ```
 
-⚠️: make sure all variables are populated. Give fake value for `VITE_GOOGLE_OAUTH_CLIENT_ID` if you do not want to test Oauth 2.0 and OIDC.
+⚠️: make sure all variables are populated. Leave `VITE_GOOGLE_OAUTH_CLIENT_ID` as is if you do not want to test Oauth 2.0 and OIDC.
 
 Install dependencies:
 
