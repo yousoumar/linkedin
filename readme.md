@@ -104,3 +104,29 @@ npm run dev
 You can access the backend at `http://localhost:8080`, the frontend at `http://localhost:5173`, and the Mailhog SMTP server UI at `http://localhost:8025`.
 
 The database hostname is `127.0.0.1`, the port is `3306`, and the root password is `root`.
+
+### Github Actions
+
+To test the CI/CD workflows locally, you can use the `act` tool. First, ensure you have `act` installed. Then, create a file named `event.json` with the following content (to simulate modifications to both frontend and backend):
+
+```json
+{
+  "repository": {
+    "default_branch": "main"
+  },
+  "push": {
+    "base_ref": "refs/heads/main",
+    "commits": [
+      {
+        "modified": ["frontend/some-file.js", "backend/some-file.java"]
+      }
+    ]
+  }
+}
+```
+
+Run the following command to simulate a push event:
+
+```
+act -e event.json
+```

@@ -1,0 +1,33 @@
+name: Frontend
+
+on:
+  workflow_call:
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm ci
+
+      - name: Run ESLint
+        working-directory: ./frontend
+        run: npm run lint
+
+      - name: Run Stylelint
+        working-directory: ./frontend
+        run: npm run lint:css
+
+      - name: Build frontend
+        working-directory: ./frontend
+        run: npm run build
